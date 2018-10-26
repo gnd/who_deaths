@@ -9,14 +9,15 @@
 
 import sys
 import MySQLdb
+import ConfigParser
 
-# FILL THIS OUT
-dbuser = ""
-dbpass = ""
-dbname = ""
-who_data_dir = ""
-
-if (dbhost == "" | dbuser == "" | dbname == ""):
+config = ConfigParser.ConfigParser()
+config.read("db.conf")
+dbhost = config.get("mysql", "dbhost")
+dbuser = config.get("mysql", "dbuser")
+dbpass = config.get("mysql", "dbpass")
+dbname = config.get("mysql", "dbname")
+if ((not dbhost) | (not dbuser) | (not dbname)):
     sys.exit("Please provide some credentials & location of WHO data")
 
 db = MySQLdb.connect(dbhost, dbuser, dbpass, dbname)
@@ -440,3 +441,7 @@ if (task == "cancer_deaths"):
         cancer_deaths(country_query, year_start, year_end, mode)
     else:
         sys.exit("Usage: ./deaths.py cancer_deaths <country_name> <year_start> <year_end> <def | num | pop | rel>")
+
+
+
+sys.exit("Usage: ./deaths.py [ cancer_top10_causes | cancer_top10_full | cancer_deaths ]")

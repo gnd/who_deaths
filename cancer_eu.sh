@@ -8,5 +8,5 @@
 #####################################################################
 for k in {austri,belgi,bosni,bulga,croat,cypru,czech,denma,eston,finla,franc,germa,greec,hunga,icela,irela,italy,kosov,latvi,lithu,luxem,maced,malta,moldo,monte,nethe,polan,portu,roman,serbi,slova,slove,spain,swede,switz,ukrai,unite}
 do
-	./deaths.py $k cancer_deaths 1994 2018 def
+	./deaths.py cancer_deaths $k 1994 2018 def
 done

@@ -7,16 +7,19 @@
 import MySQLdb
 import csv
 import sys
+import ConfigParser
 
-# FILL THIS OUT
-dbuser = ""
-dbpass = ""
-dbname = ""
-who_data_dir = ""
-db = MySQLdb.connect(dbhost, dbuser, dbpass, dbname)
-
-if (dbhost == "" | dbuser == "" | dbname == "" | who_data_dir == ""):
+config = ConfigParser.ConfigParser()
+config.read("db.conf")
+dbhost = config.get("mysql", "dbhost")
+dbuser = config.get("mysql", "dbuser")
+dbpass = config.get("mysql", "dbpass")
+dbname = config.get("mysql", "dbname")
+who_data_dir = config.get("data", "who_data_dir")
+if ((not dbhost) | (not dbuser) | (not dbname)):
     sys.exit("Please provide some credentials & location of WHO data")
+if (not who_data_dir):
+    sys.exit("Please provide the location of the WHO data (who_data_dir)")
 
 '''
 Use the following queries (copy & paste) to create tables, then populate them by running the script
