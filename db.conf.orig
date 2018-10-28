@@ -1,0 +1,8 @@
+[mysql]
+dbhost:
+dbuser:
+dbpass:
+dbname:
+
+[data]
+who_data_dir:

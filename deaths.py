@@ -103,12 +103,32 @@ def get_causes_for_country(country_code, cause, year, sex):
         arr.append([int(row[0]), row[1], int(row[2])])
     return arr
 
+# This generates an array with cause names
+# Input is a cause_range - an array:
+#   - cause_range[0] = start of the cause range (eg. C00)
+#   - cause_range[1] = end of the cause range (eg. D99)
+def generate_causes(cause_range):
+    start = cause_range[0]
+    end = cause_range[1]
+    start_letter = start[0]
+    end_letter = end[0]
+    cause_arr = []
+    final = False
+    end_num = 99
+    for char in range(ord(start_letter.lower()), ord(end_letter.lower())+1):
+        if (char == ord(end_letter.lower())):
+            final = True
+            end_num = int(end[1:])
+        for num in range(0,end_num+1):
+            cause = "%s%02d" % (chr(char).upper(), num)
+            cause_arr.append(cause)
+    return cause_arr
 
-# This prints the top10 unabbreviated causes for a given year
-# The data is in percentage of country's total population
-# The abbreviated causes used elsewhere are eg. C34 (malignant neoplasm of bronhchus and lungs)
-# The detailed causes used in many EU countries after 2010 are like eg. C341 (malignant neoplasm of upper lobe, bronchus or lung)
-def cancer_top10_names(country_query, year):
+
+#
+# This gets all the cases in a given year for a given cause_range
+#
+def get_causes(cause_range, country_code, country_name, year, short):
     m_all = {}
     f_all = {}
     m_cause = []
@@ -117,83 +137,27 @@ def cancer_top10_names(country_query, year):
     f_cause_assoc = {}
     m_pop = {}
     f_pop = {}
-    (cc, cn) = get_country(country_query)
-    cause = "BETWEEN 'c00' and 'd48'"
+    cause = "BETWEEN '%s' and '%s'" % (cause_range[0], cause_range[1])
     year_query = "= %s" % year
-    m_cause = get_causes_for_country(cc, cause, year_query, 1)
-    f_cause = get_causes_for_country(cc, cause, year_query, 2)
-    mda = deaths_all(cc, year, 1)
-    fda = deaths_all(cc, year, 2)
+    m_cause = get_causes_for_country(country_code, cause, year_query, 1)
+    f_cause = get_causes_for_country(country_code, cause, year_query, 2)
+    mda = deaths_all(country_code, year, 1)
+    fda = deaths_all(country_code, year, 2)
     m_all[year] = mda
     f_all[year] = fda
-    m_pop[year] = population(cc, year, 1)
-    f_pop[year] = population(cc, year, 2)
+    m_pop[year] = population(country_code, year, 1)
+    f_pop[year] = population(country_code, year, 2)
     if ((mda == 0) | (fda == 0)):
-        print "skipping year %s" % year
+        print "Processing data for %d .. no data" % year
         m_cause_assoc[year] = 0
         f_cause_assoc[year] = 0
-        sys.exit("no data for year")
     else:
-        print "doing year %s" % year
+        print "Processing data for %d" % year
         m_cause_assoc[year] = []
         f_cause_assoc[year] = []
-    for cl in ['C','D']:
-        for cl_i in range(101):
-            if ((cl == 'D') & (cl_i > 48)):
-                break
-            cause_code ="%s%02d" % (cl, cl_i)
-            for i in range(len(m_cause)):
-                if ((int(m_cause[i][0]) == year) & (m_cause[i][1][0:3] == cause_code)):
-                    m_cause_assoc[year].append({'cc': m_cause[i][1], 'num': int(m_cause[i][2]), 'pop': round((float(m_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)})
-            for i in range(len(f_cause)):
-                if ((int(f_cause[i][0]) == year) & (f_cause[i][1][0:3] == cause_code)):
-                    f_cause_assoc[year].append({'cc': f_cause[i][1], 'num': int(f_cause[i][2]), 'pop': round((float(f_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)})
-    # sort the arrays
-    m_cause_assoc[year] = sorted(m_cause_assoc[year], key=lambda dct: dct['pop'], reverse=True)
-    f_cause_assoc[year] = sorted(f_cause_assoc[year], key=lambda dct: dct['pop'], reverse=True)
-    print "Top 10 causes of death in %s for males in %s:" % (year, cn)
-    print m_cause_assoc[year][0:10]
-    print "Top 10 causes of death in %s for females in %s:" % (year, cn)
-    print f_cause_assoc[year][0:10]
-
-
-# This prints all the top10 causes of cancer over all years in a given country
-# The data is in percentage of country's total population
-def cancer_top10_full(country_query, year_start, year_end):
-    m_all = {}
-    f_all = {}
-    m_cause = []
-    m_cause_assoc = {}
-    f_cause = []
-    f_cause_assoc = {}
-    m_pop = {}
-    f_pop = {}
-    (cc, cn) = get_country(country_query)
-    cause = "BETWEEN 'c00' and 'd48'"
-    year_query = "BETWEEN %d and %d" % (year_start, year_end)
-    m_cause = get_causes_for_country(cc, cause, year_query, 1)
-    f_cause = get_causes_for_country(cc, cause, year_query, 2)
-    for year in range(year_start, year_end):
-        mda = deaths_all(cc, year, 1)
-        fda = deaths_all(cc, year, 2)
-        m_all[year] = mda
-        f_all[year] = fda
-        m_pop[year] = population(cc, year, 1)
-        f_pop[year] = population(cc, year, 2)
-        if ((mda == 0) | (fda == 0)):
-            print "Processing data for %d .. no data" % year
-            m_cause_assoc[year] = 0
-            f_cause_assoc[year] = 0
-            continue
-        else:
-            print "Processing data for %d" % year
-            m_cause_assoc[year] = []
-            f_cause_assoc[year] = []
-        for cl in ['C','D']:
-            for cl_i in range(101):
-                if ((cl == 'D') & (cl_i > 48)):
-                    break
-                cause_code ="%s%02d" % (cl, cl_i)
+        causes = generate_causes(cause_range)
+        for cause_code in causes:
+            if (short):
                 for i in range(len(m_cause)):
                     if ((int(m_cause[i][0]) == year) & (m_cause[i][1][0:3] == cause_code)):
                         entry_found = False
@@ -214,9 +178,82 @@ def cancer_top10_full(country_query, year_start, year_end):
                                 entry_found = True
                         if (not entry_found):
                             f_cause_assoc[year].append({'cc': cause_code, 'num': int(f_cause[i][2]), 'pop': round((float(f_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)})
+            else:
+                for i in range(len(m_cause)):
+                    if ((int(m_cause[i][0]) == year) & (m_cause[i][1][0:3] == cause_code)):
+                        m_cause_assoc[year].append({'cc': m_cause[i][1], 'num': int(m_cause[i][2]), 'pop': round((float(m_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)})
+                for i in range(len(f_cause)):
+                    if ((int(f_cause[i][0]) == year) & (f_cause[i][1][0:3] == cause_code)):
+                        f_cause_assoc[year].append({'cc': f_cause[i][1], 'num': int(f_cause[i][2]), 'pop': round((float(f_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)})
+
         # sort the arrays
         m_cause_assoc[year] = sorted(m_cause_assoc[year], key=lambda dct: dct['pop'], reverse=True)
         f_cause_assoc[year] = sorted(f_cause_assoc[year], key=lambda dct: dct['pop'], reverse=True)
+    return (m_cause_assoc, f_cause_assoc)
+
+
+# This prints the top10 unabbreviated causes for a given year and cause range
+# The data is in percentage of country's total population
+def top10_causes(country_query, cause_range, year, short_arg):
+    (cc, cn) = get_country(country_query)
+    if (short_arg == 'short'):
+        short = True
+    else:
+        short = False
+    (m_cause_assoc, f_cause_assoc) = get_causes([cause_range[0],cause_range[1]], cc, cn, year, short)
+    print "Top 10 causes between (%s-%s) in %s for males in %s (unabbreviated):" % (cause_range[0], cause_range[1], year, cn)
+    print "Rank\tCause\tDeaths\t% of Population"
+    cause_rank = 1
+    for entry in m_cause_assoc[year][0:10]:
+        print "%d:\t%s\t%d\t%f" % (cause_rank, entry['cc'], entry['num'], entry['pop'])
+        cause_rank += 1
+    print "Top 10 causes between (%s-%s) in %s for females in %s (unabbreviated):" % (cause_range[0], cause_range[1], year, cn)
+    print "Rank\tCause\tDeaths\t% of Population"
+    cause_rank = 1
+    for entry in f_cause_assoc[year][0:10]:
+        print "%d:\t%s\t%d\t%f" % (cause_rank, entry['cc'], entry['num'], entry['pop'])
+        cause_rank += 1
+
+# This prints the top10 causes for a given year
+# The data is in percentage of country's total population
+# The short (abbreviated) causes used elsewhere are eg. C34 (malignant neoplasm of bronhchus and lungs)
+# The long (detailed) causes used in many EU countries after 2010 are like eg. C341 (malignant neoplasm of upper lobe, bronchus or lung)
+# In the long variant the top10 looks differently, as simillar causes compete for a place in the list
+def cancer_top10_causes(country_query, year, short_arg):
+    (cc, cn) = get_country(country_query)
+    cause_start = 'c00'
+    cause_end = 'd48'
+    if (short_arg == 'short'):
+        short = True
+    else:
+        short = False
+    (m_cause_assoc, f_cause_assoc) = get_causes([cause_start,cause_end], cc, cn, year, short)
+    print "Top 10 causes of cancer-caused death in %s for males in %s:" % (year, cn)
+    print "Rank\tCause\tDeaths\t% of Population"
+    cause_rank = 1
+    for entry in m_cause_assoc[year][0:10]:
+        print "%d:\t%s\t%d\t%f" % (cause_rank, entry['cc'], entry['num'], entry['pop'])
+        cause_rank += 1
+    print "Top 10 causes of cancer-caused death in %s for females in %s:" % (year, cn)
+    print "Rank\tCause\tDeaths\t% of Population"
+    cause_rank = 1
+    for entry in f_cause_assoc[year][0:10]:
+        print "%d:\t%s\t%d\t%f" % (cause_rank, entry['cc'], entry['num'], entry['pop'])
+        cause_rank += 1
+
+
+# This prints all the top10 causes of cancer over all years in a given country
+# The data is in percentage of country's total population
+def cancer_top10_full(country_query, year_start, year_end):
+    m_cause_assoc = {}
+    f_cause_assoc = {}
+    (cc, cn) = get_country(country_query)
+    cause_start = 'c00'
+    cause_end = 'd48'
+    for year in range(year_start, year_end):
+        (m, f) = get_causes([cause_start,cause_end], cc, cn, year, True)
+        m_cause_assoc[year] = m[year]
+        f_cause_assoc[year] = f[year]
 
     # get all top10 causes
     cause_pool_m = []
@@ -395,26 +432,48 @@ def cancer_deaths(country_query, year_start, year_end, mode):
 if (len(sys.argv) > 1):
     task = sys.argv[1]
 else:
-    sys.exit("Usage: ./deaths.py [ cancer_top10_causes | cancer_top10_full | cancer_deaths ]")
+    sys.exit("Usage: ./deaths.py [ top10_causes | cancer_top10_causes | cancer_top10_full | cancer_deaths ]")
+
+
+# This prints the top10 unabbreviated causes within a cause range for a given year
+# The data is in percentage of country's total population for given year (mode: pop)
+if (task == "top10_causes"):
+    if (len(sys.argv) > 6):
+        country_query = sys.argv[2]
+        cause_start = sys.argv[3]
+        cause_end = sys.argv[4]
+        year = int(sys.argv[5])
+        short = sys.argv[6]
+
+        if ((short=='short') | (short=='long')):
+            top10_causes(country_query, [cause_start, cause_end], year, short)
+        else:
+            sys.exit("Usage: ./deaths.py top10_causes <country_name> <cause_start> <cause_end> <year> [short|long]")
+    else:
+        sys.exit("Usage: ./deaths.py top10_causes <country_name> <cause_start> <cause_end> <year> [short|long]")
 
 
 # This prints the top10 unabbreviated causes for a given year
 # The data is in percentage of country's total population for given year (mode: pop)
 # The abbreviated causes used elsewhere are eg. C34 (malignant neoplasm of bronhchus and lungs)
 # The detailed causes used in many EU countries after 2010 are like eg. C341 (malignant neoplasm of upper lobe, bronchus or lung)
-if (task == "cancer_top10_causes"):
-    if (len(sys.argv) > 3):
+elif (task == "cancer_top10_causes"):
+    if (len(sys.argv) > 4):
         country_query = sys.argv[2]
         year = int(sys.argv[3])
+        short = sys.argv[4]
 
-        cancer_top10_causes(country_query, year)
+        if ((short=='short') | (short=='long')):
+            cancer_top10_causes(country_query, year, short)
+        else:
+            sys.exit("Usage: ./deaths.py cancer_top10_causes <country_name> <year> <short|long>]")
     else:
-        sys.exit("Usage: ./deaths.py cancer_top10_causes <country_name> <year>")
+        sys.exit("Usage: ./deaths.py cancer_top10_causes <country_name> <year> <short|long>]")
 
 
 # This prints top10 causes of cancer over all years in a given country
 # The data is in percentage of country's total population (mode: pop)
-if (task == "cancer_top10_full"):
+elif (task == "cancer_top10_full"):
     if (len(sys.argv) > 4):
         country_query = sys.argv[2]
         year_start = int(sys.argv[3])
@@ -431,7 +490,7 @@ if (task == "cancer_top10_full"):
 #               *   death numbers  (mode: num)
 #               *   percentage of country's total population in the given year (mode: pop)
 #               *   percentage of country's total deaths in the given year (mode: rel)
-if (task == "cancer_deaths"):
+elif (task == "cancer_deaths"):
     if (len(sys.argv) > 5):
         country_query = sys.argv[2]
         year_start = int(sys.argv[3])
@@ -442,6 +501,5 @@ if (task == "cancer_deaths"):
     else:
         sys.exit("Usage: ./deaths.py cancer_deaths <country_name> <year_start> <year_end> <def | num | pop | rel>")
 
-
-
-sys.exit("Usage: ./deaths.py [ cancer_top10_causes | cancer_top10_full | cancer_deaths ]")
+else:
+    sys.exit("Usage: ./deaths.py [ top10_causes | cancer_top10_causes | cancer_top10_full | cancer_deaths ]")
