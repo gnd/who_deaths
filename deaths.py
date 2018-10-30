@@ -29,8 +29,8 @@ country_table = "countries_2018"
 population_table = "population_2018"
 year = "Year >= 1994"
 mode = "default"
-eu_names = ["AT","BE","BA","BG","CR","CY","CZ","DN","EE","FI","FR","DE","GR","HU","IE","IR","IT","LV","LT","LU","MK","MT","MD","ME","NL","PL","PT","RO","RS","SK","SI","ES","SE","CH","UA","UK"]
-eu_codes = ["4010","4020","4025","4030","4038","3080","4045","4050","4055","4070","4080","4085","4140","4150","4160","4170","4180","4186","4188","4190","4195","4200","4260","4207","4210","4230","4240","4270","4273","4274","4276","4280","4290","4300","4303","4308"]
+eu_names = ["AT","BE","BG","CR","CY","CZ","DN","EE","FI","FR","DE","GR","HU","IE","IR","IT","LV","LT","LU","MK","MT","MD","ME","NL","PL","PT","RO","RS","SK","SI","ES","SE","CH","UK"]
+eu_codes = ["4010","4020","4030","4038","3080","4045","4050","4055","4070","4080","4085","4140","4150","4160","4170","4180","4186","4188","4190","4195","4200","4260","4207","4210","4230","4240","4270","4273","4274","4276","4280","4290","4300","4308"]
 
 
 def print_no_newline(string):
@@ -518,7 +518,7 @@ def cancer_deaths(country_query, year_start, year_end, mode):
 
 
 # This prints all cancer-related deaths over all years in all EU and neighboring countries
-# (the list is not the most exhastive as smaller states like Monaco, and big neighbors like Belarus are missing from it)
+# (the list is not the most exhastive as smaller states like Bosnia, Monaco, and big neighbors like Belarus, Ukraine, are missing from it)
 #
 # The data can be:
 #               *   total numbers (mode: num)
@@ -766,7 +766,7 @@ elif (task == "cancer_deaths"):
         sys.exit("Usage: ./deaths.py cancer_deaths <country_name> <year_start> <year_end> <def | num | pop | rel>")
 
 
-# This prints all cancer-related deaths over all years in a given country
+# This prints all cancer-related deaths over all years in all EU and neighboring countries
 # The data can be:
 #               *   a detailed report (mode: default)
 #               *   death numbers  (mode: num)
