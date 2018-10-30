@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # A script to analyze data from the WHO Mortality Database (http://www.who.int/healthinfo/mortality_data/en/)
-# Currently focused mostly on cancer-related deaths.
+# Currently focused mostly on cancer and suicide related deaths.
 # For usage run ./deaths.py
 #
 # gnd, 2016 - 2018
@@ -454,14 +454,14 @@ def get_deaths(country_code, cause_range, year_range):
 
 
 
-# This prints all cancer-related deaths over all years in a given country
+# This prints all cause_range-related deaths over all years in a given country
 # The data can be:
 #               *   a detailed report (mode: default)
 #               *   total numbers  (mode: num)
 #               *   percentage of country's total population in the given year (mode: pop)
 #               *   percentage of country's total deaths in the given year (mode: rel)
 #
-def cancer_deaths(country_query, year_start, year_end, mode):
+def deaths(country_query, cause_range, cause_name, year_start, year_end, mode):
     m_all = {}
     f_all = {}
     m_pop = {}
@@ -470,35 +470,35 @@ def cancer_deaths(country_query, year_start, year_end, mode):
     f_die = {}
     # Get the country code (cc) and country name cn from user
     (cc, cn) = get_country(country_query)
-    cause_start = 'c00'
-    cause_end = 'd48'
+    cause_start = cause_range[0]
+    cause_end = cause_range[1]
     print_no_newline("Retrieving data: ")
     (m_all,f_all,m_pop,f_pop,m_die,f_die) = get_deaths(cc, [cause_start, cause_end], [year_start, year_end])
 
     # Output
     if (mode == "def"):
-        print "Deaths in %s caused by cancer:" % (cn)
-        print "Year | All_deceased Female Male | Cancer_victims Female Male | % of Population Female Male | % of All_deceased Female Male"
+        print "Deaths in %s caused by %s:" % (cn, cause_name)
+        print "Year | All_deceased Female Male | Cause_victims Female Male | % of Population Female Male | % of All_deceased Female Male"
         for year in range(year_start, year_end+1):
             if m_all[year] == 0:
                 print "%d no data" % year
                 continue
             all_deceased = "%d %d %d" % (m_all[year] + f_all[year], f_all[year], m_all[year])
-            cancer_victims = "%d %d %d" % (m_die[year] + f_die[year], f_die[year], m_die[year])
+            cause_victims = "%d %d %d" % (m_die[year] + f_die[year], f_die[year], m_die[year])
             pop = "%f %f %f" % (round((float(m_die[year] + f_die[year]) / (m_pop[year] + f_pop[year])) * 100,6), round((float(f_die[year]) / (m_pop[year] + f_pop[year])) * 100,6), round((float(m_die[year]) / (m_pop[year] + f_pop[year])) * 100,6))
             rel = "%f %f %f" % (round((float(m_die[year] + f_die[year]) / (m_all[year] + f_all[year])) * 100,6), round((float(f_die[year]) / (m_all[year] + f_all[year])) * 100,6), round((float(m_die[year]) / (m_all[year] + f_all[year])) * 100,6))
-            print "%d %s %s %s %s" % (year, all_deceased, cancer_victims, pop, rel)
+            print "%d %s %s %s %s" % (year, all_deceased, cause_victims, pop, rel)
     if (mode == "num"):
-        print "Deaths in %s caused by cancer:" % (cn)
-        print "Year | Cancer_victims Female Male "
+        print "Deaths in %s caused by %s:" % (cn, cause_name)
+        print "Year | Cause_victims Female Male "
         for year in range(year_start, year_end+1):
             if m_all[year] == 0:
                 print "%d no data" % year
                 continue
-            cancer_victims = "%d %d %d" % (m_die[year] + f_die[year], f_die[year], m_die[year])
-            print "%d %s" % (year, cancer_victims)
+            cause_victims = "%d %d %d" % (m_die[year] + f_die[year], f_die[year], m_die[year])
+            print "%d %s" % (year, cause_victims)
     if (mode == "pop"):
-        print "Deaths in %s caused by cancer:" % (cn)
+        print "Deaths in %s caused by %s:" % (cn, cause_name)
         print "Year | % of Pop Female Male"
         for year in range(year_start, year_end+1):
             if m_all[year] == 0:
@@ -507,7 +507,7 @@ def cancer_deaths(country_query, year_start, year_end, mode):
             pop = "%f %f %f" % (round((float(m_die[year] + f_die[year]) / (m_pop[year] + f_pop[year])) * 100,6), round((float(f_die[year]) / (m_pop[year] + f_pop[year])) * 100,6), round((float(m_die[year]) / (m_pop[year] + f_pop[year])) * 100,6))
             print "%d %s" % (year, pop)
     if (mode == "rel"):
-        print "Deaths in %s caused by cancer:" % (cn)
+        print "Deaths in %s caused by %s:" % (cn, cause_name)
         print "Year | % of All_deceased Female Male"
         for year in range(year_start, year_end+1):
             if m_all[year] == 0:
@@ -517,7 +517,7 @@ def cancer_deaths(country_query, year_start, year_end, mode):
             print "%d %s" % (year, rel)
 
 
-# This prints all cancer-related deaths over all years in all EU and neighboring countries
+# This prints all cause_range-related deaths over all years in all EU and neighboring countries
 # (the list is not the most exhastive as smaller states like Bosnia, Monaco, and big neighbors like Belarus, Ukraine, are missing from it)
 #
 # The data can be:
@@ -525,7 +525,7 @@ def cancer_deaths(country_query, year_start, year_end, mode):
 #               *   percentage of country's total population in the given year (mode: pop)
 #               *   percentage of country's total deaths in the given year (mode: rel)
 # All of the output is divided by gender, and a total output for male and female deaths is added to it
-def cancer_eu(year_start, year_end, mode):
+def deaths_eu(cause_range, cause_name, year_start, year_end, mode):
     m_all = {}
     f_all = {}
     m_pop = {}
@@ -538,8 +538,8 @@ def cancer_eu(year_start, year_end, mode):
     f_p_tmp = {}
     m_d_tmp = {}
     f_d_tmp = {}
-    cause_start = 'c00'
-    cause_end = 'd48'
+    cause_start = cause_range[0]
+    cause_end = cause_range[1]
     for i in range(len(eu_codes)):
         country_code = eu_codes[i]
         country_name = eu_names[i]
@@ -582,7 +582,7 @@ def cancer_eu(year_start, year_end, mode):
     # Output
     if (mode == 'num'):
         cc_string = ""
-        print "Deaths in Europe caused by cancer between the years %s and %s (female):" % (year_start, year_end)
+        print "Deaths in Europe caused by %s between the years %s and %s (female):" % (cause_name, year_start, year_end)
         print "Year " + " ".join(eu_names)
         for year in range(year_start, year_end+1):
             print year,
@@ -593,7 +593,7 @@ def cancer_eu(year_start, year_end, mode):
                     print f_die[year][cn],
             print ""
         print ""
-        print "Deaths in Europe caused by cancer between the years %s and %s (male):" % (year_start, year_end)
+        print "Deaths in Europe caused by %s between the years %s and %s (male):" % (cause_name, year_start, year_end)
         print "Year " + " ".join(eu_names)
         for year in range(year_start, year_end+1):
             print year,
@@ -604,7 +604,7 @@ def cancer_eu(year_start, year_end, mode):
                     print m_die[year][cn],
             print ""
         print ""
-        print "Deaths in Europe caused by cancer between the years %s and %s (all):" % (year_start, year_end)
+        print "Deaths in Europe caused by %s between the years %s and %s (all):" % (cause_name, year_start, year_end)
         print "Year " + " ".join(eu_names)
         for year in range(year_start, year_end+1):
             print year,
@@ -617,7 +617,7 @@ def cancer_eu(year_start, year_end, mode):
         print ""
     if (mode == 'pop'):
         cc_string = ""
-        print "Deaths in Europe caused by cancer between the years %s and %s (female, %% of Pop):" % (year_start, year_end)
+        print "Deaths in Europe caused by %s between the years %s and %s (female, %% of Pop):" % (cause_name, year_start, year_end)
         print "Year " + " ".join(eu_names)
         for year in range(year_start, year_end+1):
             print year,
@@ -628,7 +628,7 @@ def cancer_eu(year_start, year_end, mode):
                     print round(float(f_die[year][cn]) / (m_pop[year][cn] + f_pop[year][cn]) * 100,6),
             print ""
         print ""
-        print "Deaths in Europe caused by cancer between the years %s and %s (male, %% of Pop):" % (year_start, year_end)
+        print "Deaths in Europe caused by %s between the years %s and %s (male, %% of Pop):" % (cause_name, year_start, year_end)
         print "Year " + " ".join(eu_names)
         for year in range(year_start, year_end+1):
             print year,
@@ -639,7 +639,7 @@ def cancer_eu(year_start, year_end, mode):
                     print round(float(m_die[year][cn]) / (m_pop[year][cn] + f_pop[year][cn]) * 100,6),
             print ""
         print ""
-        print "Deaths in Europe caused by cancer between the years %s and %s (all, %% of Pop):" % (year_start, year_end)
+        print "Deaths in Europe caused by %s between the years %s and %s (all, %% of Pop):" % (cause_name, year_start, year_end)
         print "Year " + " ".join(eu_names)
         for year in range(year_start, year_end+1):
             print year,
@@ -652,7 +652,7 @@ def cancer_eu(year_start, year_end, mode):
         print ""
     if (mode == 'rel'):
         cc_string = ""
-        print "Deaths in Europe caused by cancer between the years %s and %s (female, %% of deaths):" % (year_start, year_end)
+        print "Deaths in Europe caused by %s between the years %s and %s (female, %% of deaths):" % (cause_name, year_start, year_end)
         print "Year " + " ".join(eu_names)
         for year in range(year_start, year_end+1):
             print year,
@@ -663,7 +663,7 @@ def cancer_eu(year_start, year_end, mode):
                     print round(float(f_die[year][cn]) / (m_all[year][cn] + f_all[year][cn]) * 100,6),
             print ""
         print ""
-        print "Deaths in Europe caused by cancer between the years %s and %s (male, %% of deaths):" % (year_start, year_end)
+        print "Deaths in Europe caused by %s between the years %s and %s (male, %% of deaths):" % (cause_name, year_start, year_end)
         print "Year " + " ".join(eu_names)
         for year in range(year_start, year_end+1):
             print year,
@@ -674,7 +674,7 @@ def cancer_eu(year_start, year_end, mode):
                     print round(float(m_die[year][cn]) / (m_all[year][cn] + f_all[year][cn]) * 100,6),
             print ""
         print ""
-        print "Deaths in Europe caused by cancer between the years %s and %s (all, %% of deaths):" % (year_start, year_end)
+        print "Deaths in Europe caused by %s between the years %s and %s (all, %% of deaths):" % (cause_name, year_start, year_end)
         print "Year " + " ".join(eu_names)
         for year in range(year_start, year_end+1):
             print year,
@@ -696,7 +696,7 @@ def cancer_eu(year_start, year_end, mode):
 if (len(sys.argv) > 1):
     task = sys.argv[1]
 else:
-    sys.exit("Usage: ./deaths.py [ top10_causes | cancer_top10_causes | cancer_top10_full | cancer_deaths | cancer_eu ]")
+    sys.exit("Usage: ./deaths.py [ top10_causes | cancer_top10_causes | cancer_top10_full | cancer_deaths | suicide_deaths | cancer_eu | suicide_eu ]")
 
 
 # This prints the top10 unabbreviated causes within a cause range for a given year
@@ -761,9 +761,27 @@ elif (task == "cancer_deaths"):
         year_end = int(sys.argv[4])
         mode = sys.argv[5]
 
-        cancer_deaths(country_query, year_start, year_end, mode)
+        deaths(country_query, ['c00', 'd48'], 'cancer', year_start, year_end, mode)
     else:
         sys.exit("Usage: ./deaths.py cancer_deaths <country_name> <year_start> <year_end> <def | num | pop | rel>")
+
+
+# This prints all suicides over all years in a given country
+# The data can be:
+#               *   a detailed report (mode: default)
+#               *   death numbers  (mode: num)
+#               *   percentage of country's total population in the given year (mode: pop)
+#               *   percentage of country's total deaths in the given year (mode: rel)
+elif (task == "suicide_deaths"):
+    if (len(sys.argv) > 5):
+        country_query = sys.argv[2]
+        year_start = int(sys.argv[3])
+        year_end = int(sys.argv[4])
+        mode = sys.argv[5]
+
+        deaths(country_query, ['x60', 'x84'], 'suicide', year_start, year_end, mode)
+    else:
+        sys.exit("Usage: ./deaths.py suicide_deaths <country_name> <year_start> <year_end> <def | num | pop | rel>")
 
 
 # This prints all cancer-related deaths over all years in all EU and neighboring countries
@@ -778,9 +796,26 @@ elif (task == "cancer_eu"):
         year_end = int(sys.argv[3])
         mode = sys.argv[4]
 
-        cancer_eu(year_start, year_end, mode)
+        deaths_eu(['c00','d48'], 'cancer', year_start, year_end, mode)
     else:
         sys.exit("Usage: ./deaths.py cancer_eu <year_start> <year_end> <num | pop | rel>")
 
+
+# This prints all suicides over all years in all EU and neighboring countries
+# The data can be:
+#               *   a detailed report (mode: default)
+#               *   death numbers  (mode: num)
+#               *   percentage of country's total population in the given year (mode: pop)
+#               *   percentage of country's total deaths in the given year (mode: rel)
+elif (task == "suicide_eu"):
+    if (len(sys.argv) > 4):
+        year_start = int(sys.argv[2])
+        year_end = int(sys.argv[3])
+        mode = sys.argv[4]
+
+        deaths_eu(['x60','x84'], 'suicide', year_start, year_end, mode)
+    else:
+        sys.exit("Usage: ./deaths.py suicide_eu <year_start> <year_end> <num | pop | rel>")
+
 else:
-    sys.exit("Usage: ./deaths.py [ top10_causes | cancer_top10_causes | cancer_top10_full | cancer_deaths | cancer_eu ]")
+    sys.exit("Usage: ./deaths.py [ top10_causes | cancer_top10_causes | cancer_top10_full | cancer_deaths | suicide_deaths | cancer_eu | suicide_eu ]")
