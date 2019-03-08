@@ -1,0 +1,459 @@
+<html>
+<head>
+    <title></title>
+    <!-- MOMENT.JS -->
+    <script src="moment.js"></script>
+    <!-- CHART.JS -->
+    <script src="Chart.min.js"></script>
+    <!-- PALETTE.JS -->
+    <script src="palette.js"></script>
+    <!-- MOBILE & DESKTOP STYLES -->
+    <link rel="stylesheet" media='screen' href="style.css"/>
+</head>
+<body style="margin: 0;">
+    <div id="nav_top" style="width: 99%; padding-left: 4%; padding-top: 0.5%; border-bottom: 1px solid black; padding-bottom: 1%;">
+        <button class="datasource" id='num' style="height: 20px; background-color: white; border: 1px; border-style: solid;" onclick="switch_datasource('num');">Number od deaths by cancer</button>
+        <button class="datasource" id='pop' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('pop');">Percentage of population dead by cancer</button>
+        <button class="datasource" id='pop2' style="display: none; height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('pop2');">Percentage of population dead by cancer (relative to gender)</button>
+        <button class="datasource" id='rel' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('rel');">Deaths by cancer as a percentage of all deaths</button>
+        <button class="datasource" id='rel2' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('rel2');">Deaths by cancer as a percentage of all deaths (relative to gender)</button>
+    </div>
+    <div class="chart-container" style="padding-left: 1%; position: relative; width:85%; height:83%;">
+        <canvas id="full"></canvas>
+    </div>
+    <br/><br/><br/>
+    <div id="nav_bottom" style="width: 100%; background-color: white; border: 2px; border-color: black; padding-left: 4%;">
+        <div style=\"float: left;\">
+            Gender:
+            <button id='all' style="width: 70px; height: 20px; background-color: gold; border: 0px;" onclick="switch_gender('all');">ALL</button>
+            &nbsp;
+            <button id='man' style="width: 70px; height: 20px; background-color: yellow; border: 0px;" onclick="switch_gender('man');">MALE</button>
+            &nbsp;
+            <button id='fem' style="width: 70px; height: 20px; background-color: yellow; border: 0px;" onclick="switch_gender('fem');">FEMALE</button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Countries: <button id='eu_all' style="width: 50px; height: 20px; background-color: gold; border: 0px;" onclick="switch_countries('eu_all');">EU</button>
+            &nbsp;
+            <button id='eu_emu' style="width: 50px; height: 20px; background-color: pink; border: 0px;" onclick="switch_countries('eu_emu');">EMU</button>
+            &nbsp;
+            <button id='eu_v4' style="width: 50px; height: 20px; background-color: pink; border: 0px;" onclick="switch_countries('eu_v4');">V4</button>
+            &nbsp;
+            <button id='eu_cs' style="width: 50px; height: 20px; background-color: pink; border: 0px;" onclick="switch_countries('eu_cs');">CZSK</button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Max: <button id='max' style="width: 150px; height: 20px; background-color: red; border: 0px;" onclick="switch_max();">Recalculate max</button>
+        </div>
+    </div>
+</body>
+<script src="eu_cancer_num.js"></script>
+<script src="eu_cancer_pop.js"></script>
+<script src="eu_cancer_rel.js"></script>
+<script src="eu_cancer_pop2.js"></script>
+<script src="eu_cancer_rel2.js"></script>
+<script>
+    // the graph
+    var full = document.getElementById("full").getContext('2d');
+
+    // graph height
+    var graph_height = window.innerHeight * 0.83;
+
+    // countres lists
+    var eu_all = ["AT","BE","BG","CR","CY","CZ","DN","EE","FI","FR","DE","GR","HU","IE","IR","IT","LV","LT","LU","MK","MT","MD","ME","NL","PL","PT","RO","RS","SK","SI","ES","SE","CH","UK"];
+    var eu_emu = ["AT","BE","CR","CY","EE","FR","DE","GR","IR","IT","NL","PL","PT","SK","SI","ES","SE"];
+    var eu_v4 = ["CZ","HU","PL","SK"];
+    var eu_cs = ["CZ","SK"];
+
+    // ticks
+    var years = ['1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016'];
+    var countries = eu_all;
+
+    // genders
+    var genders = ['fem', 'man', 'all'];
+
+    // current gender
+    var curr_gender = 'all';
+
+    // recalculate max or not
+    var recalculate_max = false;
+
+    // data source
+    page_title = page_title_num;
+    data_array = data_array_num;
+    chart_title = chart_title_num;
+    chart_title_stub = chart_title_stub_num;
+
+
+    // generate palette
+    var pal = palette('mpn65', countries.length);
+
+    // HEX to R,G,B - taken from http://www.javascripter.net/faq/hextorgb.htm
+    function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
+    function hexToG(h) {return parseInt((cutHex(h)).substring(2,4),16)}
+    function hexToB(h) {return parseInt((cutHex(h)).substring(4,6),16)}
+    function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
+
+    // HEX to RGBA
+    function hexToRGBA(h, alpha) {
+        return "rgba(" + hexToR(h) + "," + hexToG(h) + "," + hexToB(h) + "," + alpha + ")";
+    }
+
+    // This takes care of data array switching and chart titles
+    // when choosing different genders
+    function switch_gender(gender) {
+        curr_gender = gender;
+        for (var i=0; i< window.myChart.data.datasets.length; i++) {
+            var cn = window.myChart.data.datasets[i].label;
+            if (data_array[gender][cn] && (countries.indexOf(cn) > -1)) {
+                window.myChart.data.datasets[i].data = data_array[gender][cn];
+            } else {
+                window.myChart.data.datasets[i].data = [];
+            }
+        }
+        // change the chart title
+        var suffix = "";
+        if (gender == 'all') {
+            suffix = "(Male + Female)"
+        }
+        if (gender == 'man') {
+            suffix = "(Male)"
+        }
+        if (gender == 'fem') {
+            suffix = "(Female)"
+        }
+        window.myChart.options.title.text = chart_title_stub + suffix;
+        // change active button color
+        for (var i=0; i< genders.length; i++) {
+            if (genders[i] == gender) {
+                document.getElementById(genders[i]).style.backgroundColor = 'gold';
+            } else {
+                document.getElementById(genders[i]).style.backgroundColor = 'yellow';
+            }
+        }
+
+        // if recalculate_max, change max chart values
+        if (recalculate_max) {
+            window.myChart.options.scales.yAxes[0].ticks.max = get_max(gender);
+        } else {
+            window.myChart.options.scales.yAxes[0].ticks.max = get_max('all');
+        }
+
+        // update chart
+        window.myChart.update();
+    }
+
+    // This takes care of data array switching and chart titles
+    // when choosing different genders
+    function switch_countries(new_countries) {
+        if (new_countries === 'eu_all'){
+            countries = eu_all;
+            document.getElementById('eu_all').style.backgroundColor = 'gold';
+            document.getElementById('eu_emu').style.backgroundColor = 'pink';
+            document.getElementById('eu_v4').style.backgroundColor = 'pink';
+            document.getElementById('eu_cs').style.backgroundColor = 'pink';
+        }
+        if (new_countries === 'eu_emu'){
+            countries = eu_emu;
+            document.getElementById('eu_all').style.backgroundColor = 'pink';
+            document.getElementById('eu_emu').style.backgroundColor = 'gold';
+            document.getElementById('eu_v4').style.backgroundColor = 'pink';
+            document.getElementById('eu_cs').style.backgroundColor = 'pink';
+        }
+        if (new_countries === 'eu_v4'){
+            countries = eu_v4;
+            document.getElementById('eu_all').style.backgroundColor = 'pink';
+            document.getElementById('eu_emu').style.backgroundColor = 'pink';
+            document.getElementById('eu_v4').style.backgroundColor = 'gold';
+            document.getElementById('eu_cs').style.backgroundColor = 'pink';
+        }
+        if (new_countries === 'eu_cs'){
+            countries = eu_cs;
+            document.getElementById('eu_all').style.backgroundColor = 'pink';
+            document.getElementById('eu_emu').style.backgroundColor = 'pink';
+            document.getElementById('eu_v4').style.backgroundColor = 'pink';
+            document.getElementById('eu_cs').style.backgroundColor = 'gold';
+        }
+
+        // do the rest
+        switch_gender(curr_gender);
+    }
+
+    function switch_datasource(source) {
+        if (source === 'num') {
+            data_array = data_array_num;
+            page_title = page_title_num;
+            chart_title = chart_title_num;
+            chart_title_stub = chart_title_stub_num;
+            chart_max = get_max(curr_gender);
+            document.getElementById('num').style.border = '1px';
+            document.getElementById('pop').style.border = '0px';
+            document.getElementById('pop2').style.border = '0px';
+            document.getElementById('rel').style.border = '0px';
+            document.getElementById('rel2').style.border = '0px';
+            window.myChart.options.scales.yAxes = [{
+                type: 'logarithmic',
+                ticks: {
+                    min: 0,
+                    max: chart_max,
+                    callback: function (value, index, values) {
+                        return Number(value.toString());
+                    }
+                },
+                afterBuildTicks: function (chartObj) { //Build ticks labelling as per your need
+                    chartObj.ticks = [];
+                    chartObj.ticks.push(100);
+                    chartObj.ticks.push(250);
+                    chartObj.ticks.push(500);
+                    chartObj.ticks.push(1000);
+                    chartObj.ticks.push(2500);
+                    chartObj.ticks.push(5000);
+                    chartObj.ticks.push(10000);
+                    chartObj.ticks.push(25000);
+                    chartObj.ticks.push(50000);
+                    chartObj.ticks.push(100000);
+                    chartObj.ticks.push(250000);
+                }
+            }]
+        }
+        if (source === 'pop') {
+            data_array = data_array_pop;
+            page_title = page_title_pop;
+            chart_title = chart_title_pop;
+            chart_title_stub = chart_title_stub_pop;
+            chart_max = get_max(curr_gender);
+            window.myChart.options.scales.yAxes[0].type = 'linear';
+            document.getElementById('num').style.border = '0px';
+            document.getElementById('pop').style.border = '1px';
+            document.getElementById('pop').style.borderStyle = 'solid';
+            document.getElementById('pop2').style.border = '0px';
+            document.getElementById('rel').style.border = '0px';
+            document.getElementById('rel2').style.border = '0px';
+            window.myChart.options.scales.yAxes = [{
+                type: 'linear',
+                ticks: {
+                    min: 0,
+                    max: chart_max
+                },
+            }]
+        }
+        if (source === 'pop2') {
+            data_array = data_array_pop2;
+            page_title = page_title_pop2;
+            chart_title = chart_title_pop2;
+            chart_title_stub = chart_title_stub_pop2;
+            chart_max = get_max(curr_gender);
+            window.myChart.options.scales.yAxes[0].type = 'linear';
+            document.getElementById('num').style.border = '0px';
+            document.getElementById('pop').style.border = '0px';
+            document.getElementById('pop2').style.border = '1px';
+            document.getElementById('pop2').style.borderStyle = 'solid';
+            document.getElementById('rel').style.border = '0px';
+            document.getElementById('rel2').style.border = '0px';
+            window.myChart.options.scales.yAxes = [{
+                type: 'linear',
+                ticks: {
+                    min: 0,
+                    max: chart_max
+                },
+            }]
+        }
+        if (source === 'rel') {
+            data_array = data_array_rel;
+            page_title = page_title_rel;
+            chart_title = chart_title_rel;
+            chart_title_stub = chart_title_stub_rel;
+            chart_max = get_max(curr_gender);
+            window.myChart.options.scales.yAxes[0].type = 'linear';
+            document.getElementById('num').style.border = '0px';
+            document.getElementById('pop').style.border = '0px';
+            document.getElementById('pop2').style.border = '0px';
+            document.getElementById('rel').style.border = '1px';
+            document.getElementById('rel').style.borderStyle = 'solid';
+            document.getElementById('rel2').style.border = '0px';
+            window.myChart.options.scales.yAxes = [{
+                type: 'linear',
+                ticks: {
+                    min: 0,
+                    max: chart_max
+                },
+            }]
+        }
+        if (source === 'rel2') {
+            data_array = data_array_rel2;
+            page_title = page_title_rel2;
+            chart_title = chart_title_rel2;
+            chart_title_stub = chart_title_stub_rel2;
+            chart_max = get_max(curr_gender);
+            window.myChart.options.scales.yAxes[0].type = 'linear';
+            document.getElementById('num').style.border = '0px';
+            document.getElementById('pop').style.border = '0px';
+            document.getElementById('pop2').style.border = '0px';
+            document.getElementById('rel').style.border = '0px';
+            document.getElementById('rel2').style.border = '1px';
+            document.getElementById('rel2').style.borderStyle = 'solid';
+            window.myChart.options.scales.yAxes = [{
+                type: 'linear',
+                ticks: {
+                    min: 0,
+                    max: chart_max
+                },
+            }]
+        }
+
+        // do the data switching
+        switch_countries(countries);
+
+        // switch page title
+        document.title = page_title;
+    }
+
+    // create a legendCallback - see: https://github.com/chartjs/Chart.js/issues/2565
+    function legendcallback(chart) {
+        var legendHtml = [];
+        legendHtml.push('<table>KAKA');
+        legendHtml.push('<tr>');
+        for (var i=0; i<chart.data.datasets.length; i++) {
+            //legendHtml.push('<td><div class="chart-legend" style="background-color:' + chart.data.datasets[i].borderColor + '"></div></td>');
+            legendHtml.push('<td><div class="chart-legend" style="background-color: gold;">NUNU</div></td>');
+            if (chart.data.datasets[i].label) {
+                legendHtml.push(
+                    '<td class="chart-legend-label-text" onclick="updateDataset(event, ' + '\'' + chart.legend.legendItems[i].datasetIndex + '\'' + ')">'
+                     + chart.data.datasets[i].label + 'NANA</td>');
+            }
+        }
+        legendHtml.push('</tr>');
+        legendHtml.push('</table>');
+        return legendHtml.join("");
+    }
+
+    // get a max for all charts
+    function get_max(gender) {
+        var max = 0;
+        var min = 0;
+        for (var i=0; i<countries.length; i++) {
+            for (var j=0; j<years.length; j++) {
+                if (max < data_array[gender][countries[i]][j]) {
+                    max = data_array[gender][countries[i]][j];
+                }
+                if (min > data_array[gender][countries[i]][j]) {
+                    min = data_array[gender][countries[i]][j];
+                }
+            }
+        }
+        if (max > 100) {
+            return Math.round(max * 1.1);
+        } else {
+            return Math.round(max * 110) / 100;
+        }
+    }
+
+    // switch max recalculation
+    function switch_max() {
+        var gender = 'all';
+
+        if (recalculate_max) {
+            document.getElementById('max').style.backgroundColor = 'red';
+            recalculate_max = false;
+
+        } else {
+            document.getElementById('max').style.backgroundColor = 'green';
+            recalculate_max = true;
+            gender = curr_gender;
+        }
+
+        // update max
+        window.myChart.options.scales.yAxes[0].ticks.max = get_max(gender);
+
+        // update chart
+        window.myChart.update();
+    }
+
+    ////// The chart
+    var chart_max = get_max('all');
+    window.myChart = new Chart(full, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                { label: 'AT',data: data_array['all']['AT'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[0],pointStyle: 'cross',pointBackgroundColor: '#'+pal[0],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'BE',data: data_array['all']['BE'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[1],pointStyle: 'cross',pointBackgroundColor: '#'+pal[1],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'BG',data: data_array['all']['BG'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[2],pointStyle: 'cross',pointBackgroundColor: '#'+pal[2],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'CR',data: data_array['all']['CR'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[3],pointStyle: 'cross',pointBackgroundColor: '#'+pal[3],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'CY',data: data_array['all']['CY'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[4],pointStyle: 'cross',pointBackgroundColor: '#'+pal[4],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'CZ',data: data_array['all']['CZ'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[5],pointStyle: 'cross',pointBackgroundColor: '#'+pal[5],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'DN',data: data_array['all']['DN'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[6],pointStyle: 'cross',pointBackgroundColor: '#'+pal[6],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'EE',data: data_array['all']['EE'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[7],pointStyle: 'cross',pointBackgroundColor: '#'+pal[7],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'FI',data: data_array['all']['FI'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[8],pointStyle: 'cross',pointBackgroundColor: '#'+pal[8],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'FR',data: data_array['all']['FR'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[9],pointStyle: 'cross',pointBackgroundColor: '#'+pal[9],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'DE',data: data_array['all']['DE'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[10],pointStyle: 'cross',pointBackgroundColor: '#'+pal[10],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'GR',data: data_array['all']['GR'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[11],pointStyle: 'cross',pointBackgroundColor: '#'+pal[11],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'HU',data: data_array['all']['HU'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[12],pointStyle: 'cross',pointBackgroundColor: '#'+pal[12],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'IE',data: data_array['all']['IE'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[13],pointStyle: 'cross',pointBackgroundColor: '#'+pal[13],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'IR',data: data_array['all']['IR'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[14],pointStyle: 'cross',pointBackgroundColor: '#'+pal[14],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'IT',data: data_array['all']['IT'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[15],pointStyle: 'cross',pointBackgroundColor: '#'+pal[15],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'LV',data: data_array['all']['LV'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[16],pointStyle: 'cross',pointBackgroundColor: '#'+pal[16],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'LT',data: data_array['all']['LT'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[17],pointStyle: 'cross',pointBackgroundColor: '#'+pal[17],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'LU',data: data_array['all']['LU'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[18],pointStyle: 'cross',pointBackgroundColor: '#'+pal[18],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'MK',data: data_array['all']['MK'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[19],pointStyle: 'cross',pointBackgroundColor: '#'+pal[19],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'MT',data: data_array['all']['MT'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[20],pointStyle: 'cross',pointBackgroundColor: '#'+pal[20],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'MD',data: data_array['all']['MD'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[21],pointStyle: 'cross',pointBackgroundColor: '#'+pal[21],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'ME',data: data_array['all']['ME'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[22],pointStyle: 'cross',pointBackgroundColor: '#'+pal[22],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'NL',data: data_array['all']['NL'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[23],pointStyle: 'cross',pointBackgroundColor: '#'+pal[23],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'PL',data: data_array['all']['PL'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[24],pointStyle: 'cross',pointBackgroundColor: '#'+pal[24],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'PT',data: data_array['all']['PT'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[25],pointStyle: 'cross',pointBackgroundColor: '#'+pal[25],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'RO',data: data_array['all']['RO'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[26],pointStyle: 'cross',pointBackgroundColor: '#'+pal[26],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'RS',data: data_array['all']['RS'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[27],pointStyle: 'cross',pointBackgroundColor: '#'+pal[27],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'SK',data: data_array['all']['SK'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[28],pointStyle: 'cross',pointBackgroundColor: '#'+pal[28],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'SI',data: data_array['all']['SI'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[29],pointStyle: 'cross',pointBackgroundColor: '#'+pal[29],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'ES',data: data_array['all']['ES'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[30],pointStyle: 'cross',pointBackgroundColor: '#'+pal[30],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'SE',data: data_array['all']['SE'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[31],pointStyle: 'cross',pointBackgroundColor: '#'+pal[31],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'CH',data: data_array['all']['CH'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[32],pointStyle: 'cross',pointBackgroundColor: '#'+pal[32],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'UK',data: data_array['all']['UK'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[33],pointStyle: 'cross',pointBackgroundColor: '#'+pal[33],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0}
+            ]
+        },
+        options: {
+            title: {
+                display: true,
+                text: chart_title
+            },
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'year'
+                    }
+                }],
+                yAxes: [{
+                    type: 'logarithmic',
+                    ticks: {
+                        min: 0,
+                        max: chart_max,
+                        callback: function (value, index, values) {
+                            return Number(value.toString());
+                        }
+                    },
+                    afterBuildTicks: function (chartObj) { //Build ticks labelling as per your need
+                        chartObj.ticks = [];
+                        chartObj.ticks.push(100);
+                        chartObj.ticks.push(250);
+                        chartObj.ticks.push(500);
+                        chartObj.ticks.push(1000);
+                        chartObj.ticks.push(2500);
+                        chartObj.ticks.push(5000);
+                        chartObj.ticks.push(10000);
+                        chartObj.ticks.push(25000);
+                        chartObj.ticks.push(50000);
+                        chartObj.ticks.push(100000);
+                        chartObj.ticks.push(250000);
+                    }
+                }]
+            },
+            legendCallback: legendcallback,
+            legend: {
+                display: true
+            }
+        }
+    });
+
+    window.onload = function() {
+        document.title = page_title;
+    };
+</script>
+</html>

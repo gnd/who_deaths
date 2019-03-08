@@ -1,0 +1,13 @@
+a.menu_link {
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}
+
+a.menu_link:hover {
+    text-decoration: underline;
+}
+
+button.datasource:hover {
+    text-decoration: underline;
+}
