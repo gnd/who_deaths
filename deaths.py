@@ -288,7 +288,7 @@ def cancer_top10_causes(country_query, year, short_arg):
 # This prints all the top10 causes of cancer over all years in a given country
 # The data is in percentage of country's total population
 #
-def cancer_top10_full(country_query, year_start, year_end):
+def cancer_top10_full(country_query, year_start, year_end, mode, format):
     m_cause_assoc = {}
     f_cause_assoc = {}
     (cc, cn) = get_country(country_query)
@@ -342,38 +342,77 @@ def cancer_top10_full(country_query, year_start, year_end):
                     output_f[year]['rest']['num'] += entry['num']
                     output_f[year]['rest']['pop'] += entry['pop']
 
-    # print the male output arrays
-    print "Development of male cancer cause bettwen the years %d and %d in %s" % (year_start, year_end, cn)
-    print "cause",
-    for cause in cause_pool_m:
-        print cause,
-    print ""
-    for year in range(year_start, year_end):
-        if (m_cause_assoc[year] != 0):
-            print year,
+    if (mode == 'pop'):
+        if (format == 'normal'):
+            # print the male output arrays
+            print "Development of male cancer cause bettwen the years %d and %d in %s" % (year_start, year_end, cn)
+            print "cause",
             for cause in cause_pool_m:
-                print output_m[year][cause]['pop'],
+                print cause,
             print ""
-        else:
-            print "%d no data" % year
-    print ""
-
-    # print the female output arrays
-    print "Development of female cancer cause bettwen the years %d and %d in %s" % (year_start, year_end, cn)
-    print "cause",
-    for cause in cause_pool_f:
-        print cause,
-    print ""
-    for year in range(year_start, year_end):
-        if (f_cause_assoc[year] != 0):
-            print year,
+            for year in range(year_start, year_end):
+                if (m_cause_assoc[year] != 0):
+                    print year,
+                    for cause in cause_pool_m:
+                        print output_m[year][cause]['pop'],
+                    print ""
+                else:
+                    print "%d no data" % year
+            print ""
+            # print the female output arrays
+            print "Development of female cancer cause bettwen the years %d and %d in %s" % (year_start, year_end, cn)
+            print "cause",
             for cause in cause_pool_f:
-                print output_f[year][cause]['pop'],
+                print cause,
             print ""
-        else:
-            print "%d no data" % year
-    print ""
-
+            for year in range(year_start, year_end):
+                if (f_cause_assoc[year] != 0):
+                    print year,
+                    for cause in cause_pool_f:
+                        print output_f[year][cause]['pop'],
+                    print ""
+                else:
+                    print "%d no data" % year
+            print ""
+        if (format == 'chartjs'):
+            # print causes for f and m
+            print "var cause_f = [",
+            for cause in cause_pool_f:
+                print "'%s'," % cause,
+            print "];"
+            print "var cause_m = [",
+            for cause in cause_pool_m:
+                print "'%s'," % cause,
+            print "];"
+            # print the male output arrays
+            gender = 'man'
+            print "// Development of cancer causes bettwen the years %d and %d in %s (gender: %s, %% of the population):" % (year_start, year_end, cn, gender)
+            print "data_array_%s = [];" % mode
+            print "data_array_%s['%s'] = [];" % (mode, gender)
+            for cause in cause_pool_m:
+                print "data_array_%s['%s']['%s'] = [" % (mode, gender, cause),
+                for year in range(year_start, year_end):
+                    if (m_cause_assoc[year] != 0):
+                        num = round(output_m[year][cause]['pop'],6)
+                        print "%f," % (num),
+                    else:
+                        'Number.NaN,',
+                print "];"
+            print ""
+            # print the female output arrays
+            gender = 'fem'
+            print "// Development of cancer causes bettwen the years %d and %d in %s (gender: %s, %% of the population):" % (year_start, year_end, cn, gender)
+            print "data_array_%s['%s'] = [];" % (mode, gender)
+            for cause in cause_pool_f:
+                print "data_array_%s['%s']['%s'] = [" % (mode, gender, cause),
+                for year in range(year_start, year_end):
+                    if (f_cause_assoc[year] != 0):
+                        num = round(output_f[year][cause]['pop'],6)
+                        print "%f," % (num),
+                    else:
+                        'Number.NaN,',
+                print "];"
+            print ""
 
 
 # This gets all deaths, population, and deaths related to cause range
@@ -968,6 +1007,8 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
 #############################
 # TODO: add examples into help
 # TODO: add a way to browse cause-ranges (maybe into the db)
+# TODO: suicide chartjs
+# TODO  cancer_top10_full - add also top10 for all genders together
 
 ### Get some task or exit
 if (len(sys.argv) > 1):
@@ -1013,16 +1054,24 @@ elif (task == "cancer_top10_causes"):
 
 
 # This prints top10 causes of cancer over all years in a given country
-# The data is in percentage of country's total population (mode: pop)
+# The data can be:
+#               *   death numbers  (mode: num)
+#               *   percentage of country's total population in the given year (mode: pop)
+#               *   percentage of country's total deaths in the given year (mode: rel)
 elif (task == "cancer_top10_full"):
-    if (len(sys.argv) > 4):
+    if (len(sys.argv) > 5):
         country_query = sys.argv[2]
         year_start = int(sys.argv[3])
         year_end = int(sys.argv[4])
+        mode = sys.argv[5]
+        if (len(sys.argv) > 6):
+            format = sys.argv[6]
+        else:
+            format = 'normal'
 
-        cancer_top10_full(country_query, year_start, year_end)
+        cancer_top10_full(country_query, year_start, year_end, mode, format)
     else:
-        sys.exit("Usage: ./deaths.py cancer_top10_full <country_name> <year_start> <year_end>")
+        sys.exit("Usage: ./deaths.py cancer_top10_full <country_name> <year_start> <year_end> <num | pop | rel> [chartjs]")
 
 
 # This prints all cancer-related deaths over all years in a given country
