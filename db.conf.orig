@@ -1,5 +1,5 @@
 [mysql]
-dbhost:
+dbhost: 
 dbuser:
 dbpass:
 dbname:
