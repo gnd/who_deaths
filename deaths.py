@@ -355,6 +355,7 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
             for entry in a_cause_assoc[year][0:10]:
                 if entry['cc'] not in cause_pool_a:
                     cause_pool_a.append(entry['cc'])
+                    print entry['cc']
 
     # create the output arrays
     output_m = {}
@@ -446,7 +447,7 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
                 print "%d no data" % year
         print ""
     if (format == 'chartjs'):
-        # print causes for f and m
+        # print causes for mfa
         print "var cause_f = [",
         for cause in cause_pool_f:
             print "'%s'," % cause,
