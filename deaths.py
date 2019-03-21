@@ -352,7 +352,6 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
             for entry in a_cause_assoc[year][0:10]:
                 if entry['cc'] not in cause_pool_a:
                     cause_pool_a.append(entry['cc'])
-                print entry
 
     # create the output arrays
     output_m = {}
