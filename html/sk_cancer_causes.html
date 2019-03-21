@@ -24,8 +24,8 @@
     <div id="nav_bottom" style="width: 100%; background-color: white; border: 2px; border-color: black; padding-left: 4%;">
         <div style=\"float: left;\">
             Gender:
-            <!--<button id='all' style="width: 70px; height: 20px; background-color: gold; border: 0px;" onclick="switch_gender('all');">ALL</button>
-            &nbsp;-->
+            <button id='all' style="width: 70px; height: 20px; background-color: gold; border: 0px;" onclick="switch_gender('all');">ALL</button>
+            &nbsp;
             <button id='fem' style="width: 70px; height: 20px; background-color: yellow; border: 0px;" onclick="switch_gender('fem');">FEMALE</button>
             &nbsp;
             <button id='man' style="width: 70px; height: 20px; background-color: yellow; border: 0px;" onclick="switch_gender('man');">MALE</button>
@@ -60,15 +60,13 @@
     var countries = eu_all;
 
     // causes lists
-    var cause_f = [ 'rest', 'C50', 'C16', 'C34', 'C18', 'C54', 'C56', 'C53', 'C25', 'C20', 'C23', 'C22', 'C71', 'C80' ];
-    var cause_m = [ 'rest', 'C34', 'C16', 'C18', 'C61', 'C20', 'C25', 'C32', 'C67', 'C22', 'C15', 'C64', 'C19', 'C80' ];
-    var causes = cause_f;
+    var causes = cause_a;
 
     // ticks
     var years = ['1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016'];
 
     // genders
-    var genders = ['fem', 'man']; //, 'all']; TODO
+    var genders = ['fem', 'man', 'all'];
 
     // current gender
     var curr_gender = 'fem';
@@ -83,7 +81,22 @@
     chart_title_stub = chart_title_stub_num;
 
     // generate palette
-    var pal = palette('mpn65', causes.length);
+    var cause_colors = {};
+    for (var i=0; i < cause_m.length; i++) {
+        cause_colors[cause_m[i]] = "";
+    }
+    for (var i=0; i < cause_f.length; i++) {
+        cause_colors[cause_f[i]] = "";
+    }
+    for (var i=0; i < cause_a.length; i++) {
+        cause_colors[cause_a[i]] = "";
+    }
+    var pal = palette('mpn65', Object.keys(cause_colors).length);
+    var i = 0;
+    for (var cause in cause_colors) {
+        cause_colors[cause] = pal[i];
+        i++;
+    }
 
     // HEX to R,G,B - taken from http://www.javascripter.net/faq/hextorgb.htm
     function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
@@ -100,27 +113,28 @@
     // when choosing different genders
     function switch_gender(gender) {
         curr_gender = gender;
-        if (curr_gender == 'fem') {
-            causes = cause_f;
-        }
         if (curr_gender == 'man') {
             causes = cause_m;
         }
-        for (var i=0; i < window.myChart.data.datasets.length; i++) {
-            var cause = window.myChart.data.datasets[i].label;
-            if (data_array[gender][cause] && (causes.indexOf(cause) > -1)) {
-                window.myChart.data.datasets[i].data = data_array[gender][cause];
-            } else {
-                window.myChart.data.datasets[i].data = [];
-            }
+        if (curr_gender == 'fem') {
+            causes = cause_f;
+        }
+        if (curr_gender == 'all') {
+            causes = cause_a;
+        }
+        // change the datasets
+        for (var i=0; i < causes.length; i++) {
+            var cause = causes[i];
+            window.myChart.data.datasets[i].data = data_array[gender][cause]
+            window.myChart.data.datasets[i].label = cause;
+            window.myChart.data.datasets[i].borderColor = '#'+cause_colors[cause];
+            window.myChart.data.datasets[i].pointBackgroundColor = '#'+cause_colors[cause];
         }
         // change the chart title
         var suffix = "";
-        /*
         if (gender == 'all') {
             suffix = "(Male + Female)"
         }
-        */
         if (gender == 'man') {
             suffix = "(Male)"
         }
@@ -141,8 +155,7 @@
         if (recalculate_max) {
             window.myChart.options.scales.yAxes[0].ticks.max = get_max(gender);
         } else {
-            // TODO
-            //window.myChart.options.scales.yAxes[0].ticks.max = get_max('all');
+            window.myChart.options.scales.yAxes[0].ticks.max = get_max('all');
         }
 
         // update chart
@@ -206,6 +219,8 @@
                 },
                 afterBuildTicks: function (chartObj) { //Build ticks labelling as per your need
                     chartObj.ticks = [];
+                    chartObj.ticks.push(0);
+                    chartObj.ticks.push(50);
                     chartObj.ticks.push(100);
                     chartObj.ticks.push(250);
                     chartObj.ticks.push(500);
@@ -241,28 +256,6 @@
                 },
             }]
         }
-        /*
-        if (source === 'pop2') {
-            data_array = data_array_pop2;
-            page_title = page_title_pop2;
-            chart_title = chart_title_pop2;
-            chart_title_stub = chart_title_stub_pop2;
-            chart_max = get_max(curr_gender);
-            window.myChart.options.scales.yAxes[0].type = 'linear';
-            document.getElementById('num').style.border = '0px';
-            document.getElementById('pop').style.border = '0px';
-            document.getElementById('pop2').style.border = '1px';
-            document.getElementById('pop2').style.borderStyle = 'solid';
-            document.getElementById('rel').style.border = '0px';
-            document.getElementById('rel2').style.border = '0px';
-            window.myChart.options.scales.yAxes = [{
-                type: 'linear',
-                ticks: {
-                    min: 0,
-                    max: chart_max
-                },
-            }]
-        }*/
         if (source === 'rel') {
             data_array = data_array_rel;
             page_title = page_title_rel;
@@ -316,13 +309,22 @@
     function get_max(gender) {
         var max = 0;
         var min = 0;
-        for (var i=0; i < causes.length; i++) {
+        if (gender == 'man') {
+            var tmp_causes = cause_m;
+        }
+        if (gender == 'fem') {
+            var tmp_causes = cause_f;
+        }
+        if (gender == 'all') {
+            var tmp_causes = cause_a;
+        }
+        for (var i=0; i < tmp_causes.length; i++) {
             for (var j=0; j < years.length; j++) {
-                if (max < data_array[gender][causes[i]][j]) {
-                    max = data_array[gender][causes[i]][j];
+                if (max < data_array[gender][tmp_causes[i]][j]) {
+                    max = data_array[gender][tmp_causes[i]][j];
                 }
-                if (min > data_array[gender][causes[i]][j]) {
-                    min = data_array[gender][causes[i]][j];
+                if (min > data_array[gender][tmp_causes[i]][j]) {
+                    min = data_array[gender][tmp_causes[i]][j];
                 }
             }
         }
@@ -357,42 +359,26 @@
 
     ////// The chart
     //var chart_max = get_max('all');
-    var chart_max = get_max('fem');
+    var chart_max = get_max('all');
     window.myChart = new Chart(full, {
         type: 'line',
         data: {
             labels: years,
-            //var cause_f = [ 'rest,' 'C50,' 'C16,' 'C34,' 'C18,' 'C54,' 'C56,' 'C53,' 'C25,' 'C20,' 'C23,' 'C22,' 'C71,' 'C80,' ];
-            //var cause_m = [ 'rest,' 'C34,' 'C16,' 'C18,' 'C61,' 'C20,' 'C25,' 'C32,' 'C67,' 'C22,' 'C15,' 'C64,' 'C19,' 'C80,' ];
             datasets: [
-                { label: 'rest',data: data_array['fem']['rest'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[0],pointStyle: 'cross',pointBackgroundColor: '#'+pal[0],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C50',data: data_array['fem']['C50'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[1],pointStyle: 'cross',pointBackgroundColor: '#'+pal[1],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C16',data: data_array['fem']['C16'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[2],pointStyle: 'cross',pointBackgroundColor: '#'+pal[2],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C34',data: data_array['fem']['C34'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[3],pointStyle: 'cross',pointBackgroundColor: '#'+pal[3],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C18',data: data_array['fem']['C18'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[4],pointStyle: 'cross',pointBackgroundColor: '#'+pal[4],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C54',data: data_array['fem']['C54'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[5],pointStyle: 'cross',pointBackgroundColor: '#'+pal[5],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C56',data: data_array['fem']['C56'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[6],pointStyle: 'cross',pointBackgroundColor: '#'+pal[6],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C53',data: data_array['fem']['C53'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[7],pointStyle: 'cross',pointBackgroundColor: '#'+pal[7],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C25',data: data_array['fem']['C25'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[8],pointStyle: 'cross',pointBackgroundColor: '#'+pal[8],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C20',data: data_array['fem']['C20'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[9],pointStyle: 'cross',pointBackgroundColor: '#'+pal[9],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C23',data: data_array['fem']['C23'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[10],pointStyle: 'cross',pointBackgroundColor: '#'+pal[10],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C22',data: data_array['fem']['C22'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[11],pointStyle: 'cross',pointBackgroundColor: '#'+pal[11],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C71',data: data_array['fem']['C71'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[12],pointStyle: 'cross',pointBackgroundColor: '#'+pal[12],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C80',data: data_array['fem']['C80'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[13],pointStyle: 'cross',pointBackgroundColor: '#'+pal[13],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'rest',data: data_array['man']['rest'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[14],pointStyle: 'cross',pointBackgroundColor: '#'+pal[14],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C34',data: data_array['man']['C34'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[15],pointStyle: 'cross',pointBackgroundColor: '#'+pal[15],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C16',data: data_array['man']['C16'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[16],pointStyle: 'cross',pointBackgroundColor: '#'+pal[16],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C18',data: data_array['man']['C18'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[17],pointStyle: 'cross',pointBackgroundColor: '#'+pal[17],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C61',data: data_array['man']['C61'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[18],pointStyle: 'cross',pointBackgroundColor: '#'+pal[18],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C20',data: data_array['man']['C20'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[19],pointStyle: 'cross',pointBackgroundColor: '#'+pal[19],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C25',data: data_array['man']['C25'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[20],pointStyle: 'cross',pointBackgroundColor: '#'+pal[20],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C32',data: data_array['man']['C32'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[21],pointStyle: 'cross',pointBackgroundColor: '#'+pal[21],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C67',data: data_array['man']['C67'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[22],pointStyle: 'cross',pointBackgroundColor: '#'+pal[22],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C22',data: data_array['man']['C22'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[23],pointStyle: 'cross',pointBackgroundColor: '#'+pal[23],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C15',data: data_array['man']['C15'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[24],pointStyle: 'cross',pointBackgroundColor: '#'+pal[24],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C64',data: data_array['man']['C64'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[25],pointStyle: 'cross',pointBackgroundColor: '#'+pal[25],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C19',data: data_array['man']['C19'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[26],pointStyle: 'cross',pointBackgroundColor: '#'+pal[26],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C80',data: data_array['man']['C80'],spanGaps: false,borderWidth: 3,borderColor: '#'+pal[27],pointStyle: 'cross',pointBackgroundColor: '#'+pal[27],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0}
+                { label: 'rest',data: data_array['all']['rest'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['rest'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['rest'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C34',data: data_array['all']['C34'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C34'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C34'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C16',data: data_array['all']['C16'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C16'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C16'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C50',data: data_array['all']['C50'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C50'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C50'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C18',data: data_array['all']['C18'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C18'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C18'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C20',data: data_array['all']['C20'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C20'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C20'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C25',data: data_array['all']['C25'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C25'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C25'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C61',data: data_array['all']['C61'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C61'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C61'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C22',data: data_array['all']['C22'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C22'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C22'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C19',data: data_array['all']['C19'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C19'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C19'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C64',data: data_array['all']['C64'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C64'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C64'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C71',data: data_array['all']['C71'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C71'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C71'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C67',data: data_array['all']['C67'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C67'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: 'C80',data: data_array['all']['C80'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C80'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C80'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0}
             ]
         },
         options: {
@@ -418,6 +404,8 @@
                     },
                     afterBuildTicks: function (chartObj) { //Build ticks labelling as per your need
                         chartObj.ticks = [];
+                        chartObj.ticks.push(0);
+                        chartObj.ticks.push(50);
                         chartObj.ticks.push(100);
                         chartObj.ticks.push(250);
                         chartObj.ticks.push(500);
