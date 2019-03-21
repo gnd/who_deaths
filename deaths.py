@@ -8,6 +8,7 @@
 #######################################################################3
 
 import sys
+import copy
 import MySQLdb
 import ConfigParser
 
@@ -178,12 +179,24 @@ def get_causes(cause_range, country_code, country_name, year, short):
     m_cause_assoc = {}
     f_cause = []
     f_cause_assoc = {}
+    a_cause = []
+    a_cause_assoc = {}
     m_pop = {}
     f_pop = {}
     cause = "BETWEEN '%s' and '%s'" % (cause_range[0], cause_range[1])
     year_query = "= %s" % year
     m_cause = get_causes_for_country(country_code, cause, year_query, 1)
     f_cause = get_causes_for_country(country_code, cause, year_query, 2)
+    # put causes together
+    a_cause = copy.deepcopy(m_cause)
+    for entry in f_cause:
+        entry_found = False
+        for a_entry in a_cause:
+            if (a_entry[1] == entry[1]):
+                a_entry[2] += entry[2]
+                entry_found = True
+        if (not entry_found):
+            a_cause.append(entry)
     mda = deaths_all(country_code, year, 1)
     fda = deaths_all(country_code, year, 2)
     m_all[year] = mda
@@ -194,10 +207,12 @@ def get_causes(cause_range, country_code, country_name, year, short):
         print "Processing data for %d .. no data" % year
         m_cause_assoc[year] = 0
         f_cause_assoc[year] = 0
+        a_cause_assoc[year] = 0
     else:
         print "Processing data for %d" % year
         m_cause_assoc[year] = []
         f_cause_assoc[year] = []
+        a_cause_assoc[year] = []
         causes = generate_causes(cause_range)
         for cause_code in causes:
             if (short):
@@ -221,6 +236,16 @@ def get_causes(cause_range, country_code, country_name, year, short):
                                 entry_found = True
                         if (not entry_found):
                             f_cause_assoc[year].append({'cc': cause_code, 'num': int(f_cause[i][2]), 'pop': round((float(f_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)})
+                for i in range(len(a_cause)):
+                    if ((int(a_cause[i][0]) == year) & (a_cause[i][1][0:3] == cause_code)):
+                        entry_found = False
+                        for entry in a_cause_assoc[year]:
+                            if entry['cc'] == cause_code:
+                                entry['num'] += int(a_cause[i][2])
+                                entry['pop'] += round((float(a_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)
+                                entry_found = True
+                        if (not entry_found):
+                            a_cause_assoc[year].append({'cc': cause_code, 'num': int(a_cause[i][2]), 'pop': round((float(a_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)})
             else:
                 for i in range(len(m_cause)):
                     if ((int(m_cause[i][0]) == year) & (m_cause[i][1][0:3] == cause_code)):
@@ -228,11 +253,15 @@ def get_causes(cause_range, country_code, country_name, year, short):
                 for i in range(len(f_cause)):
                     if ((int(f_cause[i][0]) == year) & (f_cause[i][1][0:3] == cause_code)):
                         f_cause_assoc[year].append({'cc': f_cause[i][1], 'num': int(f_cause[i][2]), 'pop': round((float(f_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)})
+                for i in range(len(a_cause)):
+                    if ((int(a_cause[i][0]) == year) & (a_cause[i][1][0:3] == cause_code)):
+                        a_cause_assoc[year].append({'cc': a_cause[i][1], 'num': int(a_cause[i][2]), 'pop': round((float(a_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)})
 
         # sort the arrays
         m_cause_assoc[year] = sorted(m_cause_assoc[year], key=lambda dct: dct['pop'], reverse=True)
         f_cause_assoc[year] = sorted(f_cause_assoc[year], key=lambda dct: dct['pop'], reverse=True)
-    return (m_cause_assoc, f_cause_assoc)
+        a_cause_assoc[year] = sorted(a_cause_assoc[year], key=lambda dct: dct['pop'], reverse=True)
+    return (m_cause_assoc, f_cause_assoc, a_cause_assoc)
 
 
 # This prints the top10 unabbreviated causes for a given year and cause range
@@ -243,7 +272,8 @@ def top10_causes(country_query, cause_range, year, short_arg):
         short = True
     else:
         short = False
-    (m_cause_assoc, f_cause_assoc) = get_causes([cause_range[0],cause_range[1]], cc, cn, year, short)
+    #// TODO a_cause
+    (m_cause_assoc, f_cause_assoc, a_cause_assoc) = get_causes([cause_range[0],cause_range[1]], cc, cn, year, short)
     print "Top 10 causes between (%s-%s) in %s for males in %s (unabbreviated):" % (cause_range[0], cause_range[1], year, cn)
     print "Rank\tCause\tDeaths\t% of Population"
     cause_rank = 1
@@ -270,7 +300,8 @@ def cancer_top10_causes(country_query, year, short_arg):
         short = True
     else:
         short = False
-    (m_cause_assoc, f_cause_assoc) = get_causes([cause_start,cause_end], cc, cn, year, short)
+    # // TODO a_cause
+    (m_cause_assoc, f_cause_assoc, a_cause_assoc) = get_causes([cause_start,cause_end], cc, cn, year, short)
     print "Top 10 causes of cancer-caused death in %s for males in %s:" % (year, cn)
     print "Rank\tCause\tDeaths\t% of Population"
     cause_rank = 1
@@ -288,22 +319,26 @@ def cancer_top10_causes(country_query, year, short_arg):
 # This prints all the top10 causes of cancer over all years in a given country
 # The data is in percentage of country's total population
 #
+# // TODO fix years
 def cancer_top10_full(country_query, year_start, year_end, mode, format):
     m_cause_assoc = {}
     f_cause_assoc = {}
+    a_cause_assoc = {}
     (cc, cn) = get_country(country_query)
     cause_start = 'c00'
     cause_end = 'd48'
     for year in range(year_start, year_end):
-        (m, f) = get_causes([cause_start,cause_end], cc, cn, year, True)
+        (m, f, a) = get_causes([cause_start,cause_end], cc, cn, year, True)
         m_cause_assoc[year] = m[year]
         f_cause_assoc[year] = f[year]
-
+        a_cause_assoc[year] = a[year]
     # get all top10 causes
     cause_pool_m = []
     cause_pool_f = []
+    cause_pool_a = []
     cause_pool_m.append('rest')
     cause_pool_f.append('rest')
+    cause_pool_a.append('rest')
     for year in range(year_start, year_end):
         if (m_cause_assoc[year] != 0):
             for entry in m_cause_assoc[year][0:10]:
@@ -313,16 +348,24 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
             for entry in f_cause_assoc[year][0:10]:
                 if entry['cc'] not in cause_pool_f:
                     cause_pool_f.append(entry['cc'])
+        if (a_cause_assoc[year] != 0):
+            for entry in a_cause_assoc[year][0:10]:
+                if entry['cc'] not in cause_pool_a:
+                    cause_pool_a.append(entry['cc'])
+                print entry
 
     # create the output arrays
     output_m = {}
     output_f = {}
+    output_a = {}
     for year in range(year_start, year_end):
         if (m_cause_assoc[year] != 0):
             output_m[year] = {}
             output_f[year] = {}
+            output_a[year] = {}
             output_m[year]['rest'] = {'num': 0, 'pop': 0}
             output_f[year]['rest'] = {'num': 0, 'pop': 0}
+            output_a[year]['rest'] = {'num': 0, 'pop': 0}
             for entry in m_cause_assoc[year]:
                 is_top10_cause = False
                 for cause in cause_pool_m:
@@ -341,11 +384,20 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
                 if (not is_top10_cause):
                     output_f[year]['rest']['num'] += entry['num']
                     output_f[year]['rest']['pop'] += entry['pop']
+            for entry in a_cause_assoc[year]:
+                is_top10_cause = False
+                for cause in cause_pool_a:
+                    if (entry['cc'] == cause):
+                        output_a[year][entry['cc']] = {'num': entry['num'], 'pop': entry['pop']}
+                        is_top10_cause = True
+                if (not is_top10_cause):
+                    output_a[year]['rest']['num'] += entry['num']
+                    output_a[year]['rest']['pop'] += entry['pop']
 
     if (mode == 'pop'):
         if (format == 'normal'):
             # print the male output arrays
-            print "Development of male cancer cause bettwen the years %d and %d in %s" % (year_start, year_end, cn)
+            print "Development of male cancer causes bettwen the years %d and %d in %s" % (year_start, year_end, cn)
             print "cause",
             for cause in cause_pool_m:
                 print cause,
@@ -360,7 +412,7 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
                     print "%d no data" % year
             print ""
             # print the female output arrays
-            print "Development of female cancer cause bettwen the years %d and %d in %s" % (year_start, year_end, cn)
+            print "Development of female cancer causes bettwen the years %d and %d in %s" % (year_start, year_end, cn)
             print "cause",
             for cause in cause_pool_f:
                 print cause,
@@ -370,6 +422,21 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
                     print year,
                     for cause in cause_pool_f:
                         print output_f[year][cause]['pop'],
+                    print ""
+                else:
+                    print "%d no data" % year
+            print ""
+            # print the female output arrays
+            print "Development of male + female cancer causes bettwen the years %d and %d in %s" % (year_start, year_end, cn)
+            print "cause",
+            for cause in cause_pool_a:
+                print cause,
+            print ""
+            for year in range(year_start, year_end):
+                if (a_cause_assoc[year] != 0):
+                    print year,
+                    for cause in cause_pool_a:
+                        print output_a[year][cause]['pop'],
                     print ""
                 else:
                     print "%d no data" % year
@@ -408,6 +475,20 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
                 for year in range(year_start, year_end):
                     if (f_cause_assoc[year] != 0):
                         num = round(output_f[year][cause]['pop'],6)
+                        print "%f," % (num),
+                    else:
+                        'Number.NaN,',
+                print "];"
+            print ""
+            # print the output arrays for male & female together
+            gender = 'all'
+            print "// Development of cancer causes bettwen the years %d and %d in %s (gender: %s, %% of the population):" % (year_start, year_end, cn, gender)
+            print "data_array_%s['%s'] = [];" % (mode, gender)
+            for cause in cause_pool_a:
+                print "data_array_%s['%s']['%s'] = [" % (mode, gender, cause),
+                for year in range(year_start, year_end):
+                    if (a_cause_assoc[year] != 0):
+                        num = round(output_a[year][cause]['pop'],6)
                         print "%f," % (num),
                     else:
                         'Number.NaN,',
