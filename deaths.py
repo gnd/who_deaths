@@ -224,14 +224,14 @@ def get_causes(cause_range, country_code, country_name, year, short):
                                 entry['num'] += int(m_cause[i][2])
                                 entry['pop'] += round((float(m_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)
                                 entry['rel'] += round((float(m_cause[i][2]) / (m_all[year]+f_all[year])) * 100,6)
-                                entry['100k'] += round((float(m_cause[i][2]) / (float(m_all[year]+f_all[year])/100000)),2)
+                                entry['100k'] += round((float(m_cause[i][2]) / (float(m_pop[year]+f_pop[year])/100000)),2)
                                 entry_found = True
                         if (not entry_found):
                             m_cause_assoc[year].append({'cc': cause_code,
                                                         'num': int(m_cause[i][2]),
                                                         'pop': round((float(m_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6),
                                                         'rel': round((float(m_cause[i][2]) / (m_all[year]+f_all[year])) * 100,6),
-                                                        '100k': round((float(m_cause[i][2]) / (float(m_all[year]+f_all[year])/100000)),2)
+                                                        '100k': round((float(m_cause[i][2]) / (float(m_pop[year]+f_pop[year])/100000)),2)
                                                         })
                 for i in range(len(f_cause)):
                     if ((int(f_cause[i][0]) == year) & (f_cause[i][1][0:3] == cause_code)):
@@ -241,14 +241,14 @@ def get_causes(cause_range, country_code, country_name, year, short):
                                 entry['num'] += int(f_cause[i][2])
                                 entry['pop'] += round((float(f_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)
                                 entry['rel'] += round((float(f_cause[i][2]) / (m_all[year]+f_all[year])) * 100,6)
-                                entry['100k'] += round((float(f_cause[i][2]) / (float(m_all[year]+f_all[year])/100000)),2)
+                                entry['100k'] += round((float(f_cause[i][2]) / (float(m_pop[year]+f_pop[year])/100000)),2)
                                 entry_found = True
                         if (not entry_found):
                             f_cause_assoc[year].append({'cc': cause_code,
                                                         'num': int(f_cause[i][2]),
                                                         'pop': round((float(f_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6),
                                                         'rel': round((float(f_cause[i][2]) / (m_all[year]+f_all[year])) * 100,6),
-                                                        '100k': round((float(f_cause[i][2]) / (float(m_all[year]+f_all[year])/100000)),2)
+                                                        '100k': round((float(f_cause[i][2]) / (float(m_pop[year]+f_pop[year])/100000)),2)
                                                         })
                 for i in range(len(a_cause)):
                     if ((int(a_cause[i][0]) == year) & (a_cause[i][1][0:3] == cause_code)):
@@ -258,14 +258,14 @@ def get_causes(cause_range, country_code, country_name, year, short):
                                 entry['num'] += int(a_cause[i][2])
                                 entry['pop'] += round((float(a_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6)
                                 entry['rel'] += round((float(a_cause[i][2]) / (m_all[year]+f_all[year])) * 100,6)
-                                entry['100k'] += round((float(a_cause[i][2]) / (float(m_all[year]+f_all[year])/100000)),2)
+                                entry['100k'] += round((float(a_cause[i][2]) / (float(m_pop[year]+f_pop[year])/100000)),2)
                                 entry_found = True
                         if (not entry_found):
                             a_cause_assoc[year].append({'cc': cause_code,
                                                         'num': int(a_cause[i][2]),
                                                         'pop': round((float(a_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6),
                                                         'rel': round((float(a_cause[i][2]) / (m_all[year]+f_all[year])) * 100,6),
-                                                        '100k': round((float(a_cause[i][2]) / (float(m_all[year]+f_all[year])/100000)),2)
+                                                        '100k': round((float(a_cause[i][2]) / (float(m_pop[year]+f_pop[year])/100000)),2)
                                                         })
             else:
                 for i in range(len(m_cause)):
@@ -274,7 +274,7 @@ def get_causes(cause_range, country_code, country_name, year, short):
                                                     'num': int(m_cause[i][2]),
                                                     'pop': round((float(m_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6),
                                                     'rel': round((float(m_cause[i][2]) / (m_all[year]+f_all[year])) * 100,6),
-                                                    '100k': round((float(m_cause[i][2]) / (float(m_all[year]+f_all[year])/100000)),2)
+                                                    '100k': round((float(m_cause[i][2]) / (float(m_pop[year]+f_pop[year])/100000)),2)
                                                     })
                 for i in range(len(f_cause)):
                     if ((int(f_cause[i][0]) == year) & (f_cause[i][1][0:3] == cause_code)):
@@ -282,7 +282,7 @@ def get_causes(cause_range, country_code, country_name, year, short):
                                                     'num': int(f_cause[i][2]),
                                                     'pop': round((float(f_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6),
                                                     'rel': round((float(f_cause[i][2]) / (m_all[year]+f_all[year])) * 100,6),
-                                                    '100k': round((float(f_cause[i][2]) / (float(m_all[year]+f_all[year])/100000)),2)
+                                                    '100k': round((float(f_cause[i][2]) / (float(m_pop[year]+f_pop[year])/100000)),2)
                                                     })
                 for i in range(len(a_cause)):
                     if ((int(a_cause[i][0]) == year) & (a_cause[i][1][0:3] == cause_code)):
@@ -290,7 +290,7 @@ def get_causes(cause_range, country_code, country_name, year, short):
                                                     'num': int(a_cause[i][2]),
                                                     'pop': round((float(a_cause[i][2]) / (m_pop[year]+f_pop[year])) * 100,6),
                                                     'rel': round((float(a_cause[i][2]) / (m_all[year]+f_all[year])) * 100,6),
-                                                    '100k': round((float(a_cause[i][2]) / (float(m_all[year]+f_all[year])/100000)),2)
+                                                    '100k': round((float(a_cause[i][2]) / (float(m_pop[year]+f_pop[year])/100000)),2)
                                                     })
 
         # sort the arrays
@@ -437,9 +437,12 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
                     output_a[year]['rest']['100k'] += entry['100k']
 
     # remove C80 from causes (it was added to the 'rest')
-    cause_pool_m.remove('C80')
-    cause_pool_f.remove('C80')
-    cause_pool_a.remove('C80')
+    if ('C80' in cause_pool_m):
+        cause_pool_m.remove('C80')
+    if ('C80' in cause_pool_f):
+        cause_pool_f.remove('C80')
+    if ('C80' in cause_pool_a):
+        cause_pool_a.remove('C80')
 
     if (format == 'normal'):
         # print the male output arrays
