@@ -18,6 +18,7 @@ dbhost = config.get("mysql", "dbhost")
 dbuser = config.get("mysql", "dbuser")
 dbpass = config.get("mysql", "dbpass")
 dbname = config.get("mysql", "dbname")
+data_year = config.get("data", "data_year")
 if ((not dbhost) | (not dbuser) | (not dbname)):
     sys.exit("Please provide some credentials & location of WHO data")
 
@@ -25,9 +26,9 @@ db = MySQLdb.connect(dbhost, dbuser, dbpass, dbname)
 cur = db.cursor()
 
 ### Define some globals
-data_table = "data_2018"
-country_table = "countries_2018"
-population_table = "population_2018"
+data_table = "data_%s" % data_year
+country_table = "countries_%s" % data_year
+population_table = "population_%s" % data_year
 year = "Year >= 1994"
 mode = "default"
 eu_names = ["AT","BE","BG","CR","CY","CZ","DN","EE","FI","FR","DE","GR","HU","IE","IR","IT","LV","LT","LU","MK","MT","MD","ME","NL","PL","PT","RO","RS","SK","SI","ES","SE","CH","UK"]
