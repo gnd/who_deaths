@@ -16,6 +16,7 @@
         <button class="datasource" id='pop' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('pop');">Percentage of population dead by cancer</button>
         <!--<button class="datasource" id='pop2' style="display: none; height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('pop2');">Percentage of population dead by cancer (relative to gender)</button> -->
         <button class="datasource" id='rel' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('rel');">Deaths by cancer as a percentage of all deaths</button>
+        <button class="datasource" id='100k' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('100k');">Deaths by cancer per 100k citizens</button>
     </div>
     <div class="chart-container" style="padding-left: 1%; position: relative; width:85%; height:83%;">
         <canvas id="full"></canvas>
@@ -45,6 +46,7 @@
 <script src="sk_cancer_causes_num.js"></script>
 <script src="sk_cancer_causes_pop.js"></script>
 <script src="sk_cancer_causes_rel.js"></script>
+<script src="sk_cancer_causes_100k.js"></script>
 <script>
     // the graph
     var full = document.getElementById("full").getContext('2d');
@@ -92,7 +94,7 @@
     var genders = ['fem', 'man', 'all'];
 
     // current gender
-    var curr_gender = 'fem';
+    var curr_gender = 'all';
 
     // recalculate max or not
     var recalculate_max = false;
@@ -231,6 +233,7 @@
             document.getElementById('num').style.border = '1px';
             document.getElementById('pop').style.border = '0px';
             document.getElementById('rel').style.border = '0px';
+            document.getElementById('100k').style.border = '0px';
             window.myChart.options.scales.yAxes = [{
                 type: 'logarithmic',
                 ticks: {
@@ -268,9 +271,8 @@
             document.getElementById('num').style.border = '0px';
             document.getElementById('pop').style.border = '1px';
             document.getElementById('pop').style.borderStyle = 'solid';
-            //document.getElementById('pop2').style.border = '0px';
+            document.getElementById('100k').style.border = '0px';
             document.getElementById('rel').style.border = '0px';
-            //document.getElementById('rel2').style.border = '0px';
             window.myChart.options.scales.yAxes = [{
                 type: 'linear',
                 ticks: {
@@ -288,10 +290,29 @@
             window.myChart.options.scales.yAxes[0].type = 'linear';
             document.getElementById('num').style.border = '0px';
             document.getElementById('pop').style.border = '0px';
-            //document.getElementById('pop2').style.border = '0px';
+            document.getElementById('100k').style.border = '0px';
             document.getElementById('rel').style.border = '1px';
             document.getElementById('rel').style.borderStyle = 'solid';
-            //document.getElementById('rel2').style.border = '0px';
+            window.myChart.options.scales.yAxes = [{
+                type: 'linear',
+                ticks: {
+                    min: 0,
+                    max: chart_max
+                },
+            }]
+        }
+        if (source === '100k') {
+            data_array = data_array_100k;
+            page_title = page_title_100k;
+            chart_title = chart_title_100k;
+            chart_title_stub = chart_title_stub_100k;
+            chart_max = get_max(curr_gender);
+            window.myChart.options.scales.yAxes[0].type = 'linear';
+            document.getElementById('num').style.border = '0px';
+            document.getElementById('pop').style.border = '0px';
+            document.getElementById('rel').style.border = '0px';
+            document.getElementById('100k').style.border = '1px';
+            document.getElementById('100k').style.borderStyle = 'solid';
             window.myChart.options.scales.yAxes = [{
                 type: 'linear',
                 ticks: {
@@ -400,8 +421,7 @@
                 { label: cause_names_sk['C19'],data: data_array['all']['C19'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C19'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C19'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
                 { label: cause_names_sk['C64'],data: data_array['all']['C64'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C64'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C64'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
                 { label: cause_names_sk['C71'],data: data_array['all']['C71'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C71'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C71'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: cause_names_sk['C67'],data: data_array['all']['C67'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C67'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: cause_names_sk['C80'],data: data_array['all']['C80'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C80'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C80'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0}
+                { label: cause_names_sk['C67'],data: data_array['all']['C67'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C67'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0}
             ]
         },
         options: {
