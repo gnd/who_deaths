@@ -4,6 +4,7 @@ page_title_100k = 'Top 10 causes of cancer deaths in Slovakia 1994 - 2018';
 // chart title
 chart_title_100k = 'Top 10 causes of cancer (male)';
 chart_title_stub_100k = 'Top 10 causes of cancer';
+
 var cause_f = [ 'rest', 'C50', 'C16', 'C34', 'C18', 'C54', 'C56', 'C53', 'C25', 'C20', 'C23', 'C22', 'C71', ];
 var cause_m = [ 'rest', 'C34', 'C16', 'C18', 'C61', 'C20', 'C25', 'C32', 'C67', 'C22', 'C15', 'C64', 'C19', ];
 var cause_a = [ 'rest', 'C34', 'C16', 'C50', 'C18', 'C20', 'C25', 'C61', 'C22', 'C19', 'C64', 'C71', 'C67', ];
