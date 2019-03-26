@@ -1,8 +1,9 @@
 [mysql]
-dbhost: 
+dbhost:
 dbuser:
 dbpass:
 dbname:
 
 [data]
 who_data_dir:
+data_year: 
