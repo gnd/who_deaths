@@ -372,7 +372,7 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
             for entry in m_cause_assoc[year]:
                 is_top10_cause = False
                 for cause in cause_pool_m:
-                    if (entry['cc'] == cause):
+                    if ((entry['cc'] == cause) and (entry['cc'].lower() != 'c80')):
                         output_m[year][entry['cc']] = {'num': entry['num'], 'pop': entry['pop'], 'rel': entry['rel']}
                         is_top10_cause = True
                 if (not is_top10_cause):
@@ -382,7 +382,7 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
             for entry in f_cause_assoc[year]:
                 is_top10_cause = False
                 for cause in cause_pool_f:
-                    if (entry['cc'] == cause):
+                    if ((entry['cc'] == cause) and (entry['cc'].lower() != 'c80')):
                         output_f[year][entry['cc']] = {'num': entry['num'], 'pop': entry['pop'], 'rel': entry['rel']}
                         is_top10_cause = True
                 if (not is_top10_cause):
@@ -392,7 +392,7 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
             for entry in a_cause_assoc[year]:
                 is_top10_cause = False
                 for cause in cause_pool_a:
-                    if (entry['cc'] == cause):
+                    if ((entry['cc'] == cause) and (entry['cc'].lower() != 'c80')):
                         output_a[year][entry['cc']] = {'num': entry['num'], 'pop': entry['pop'], 'rel': entry['rel']}
                         is_top10_cause = True
                 if (not is_top10_cause):
