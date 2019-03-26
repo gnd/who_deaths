@@ -722,6 +722,7 @@ def deaths(country_query, cause_range, cause_name, year_start, year_end, mode):
 #               *   total numbers (mode: num)
 #               *   percentage of country's total population in the given year (mode: pop)
 #               *   percentage of country's total deaths in the given year (mode: rel)
+#               *   number of deaths per 100k people (mode: 100k)
 # All of the output is divided by gender, and a total output for male and female deaths is added to it
 def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
     m_all = {}
@@ -1160,6 +1161,83 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                         print "%f," % (num),
                 print "];"
             print ""
+    if (mode == '100k'):
+        if (format == 'normal'):
+            cc_string = ""
+            print "Deaths in Europe caused by %s between the years %s and %s (female, deaths per 100k people):" % (cause_name, year_start, year_end)
+            print "Year " + " ".join(eu_names)
+            for year in range(year_start, year_end+1):
+                print year,
+                for cn in eu_names:
+                    if f_all[year][cn] == 0:
+                        print "",
+                    else:
+                        print int(float(f_die[year][cn]) / float(f_pop[year][cn]+m_pop[year][cn])/100000),
+                print ""
+            print ""
+            print "Deaths in Europe caused by %s between the years %s and %s (male, deaths per 100k people):" % (cause_name, year_start, year_end)
+            print "Year " + " ".join(eu_names)
+            for year in range(year_start, year_end+1):
+                print year,
+                for cn in eu_names:
+                    if m_all[year][cn] == 0:
+                        print "",
+                    else:
+                        print int(float(m_die[year][cn]) / float(f_pop[year][cn]+m_pop[year][cn])/100000),
+                print ""
+            print ""
+            print "Deaths in Europe caused by %s between the years %s and %s (all, deaths per 100k people):" % (cause_name, year_start, year_end)
+            print "Year " + " ".join(eu_names)
+            for year in range(year_start, year_end+1):
+                print year,
+                for cn in eu_names:
+                    if m_all[year][cn] == 0:
+                        print "",
+                    else:
+                        print int(float(f_die[year][cn]+m_die[year][cn]) / float(f_pop[year][cn]+m_pop[year][cn])/100000),
+                print ""
+            print ""
+        if (format == 'chartjs'):
+            print "data_array_%s = [];" % (mode)
+            gender = 'fem'
+            print "// Deaths in Europe caused by %s between the years %s and %s (gender: %s, deaths per 100k people):" % (cause_name, year_start, year_end, gender)
+            print "data_array_%s['%s'] = [];" % (mode, gender)
+            for cn in eu_names:
+                print "data_array_%s['%s']['%s'] = [" % (mode, gender, cn),
+                for year in range(year_start, year_end+1):
+                    if f_a_tmp[cn][year] == 0:
+                        print 'Number.NaN,',
+                    else:
+                        num = int(float(f_d_tmp[cn][year]) / (float(f_p_tmp[cn][year]+m_p_tmp[cn][year])/100000))
+                        print "%d," % (num),
+                print "];"
+            print ""
+            gender = 'man'
+            print "// Deaths in Europe caused by %s between the years %s and %s (gender: %s, deaths per 100k people):" % (cause_name, year_start, year_end, gender)
+            print "data_array_%s['%s'] = [];" % (mode, gender)
+            for cn in eu_names:
+                print "data_array_%s['%s']['%s'] = [" % (mode, gender, cn),
+                for year in range(year_start, year_end+1):
+                    if m_a_tmp[cn][year] == 0:
+                        print 'Number.NaN,',
+                    else:
+                        num = int(float(m_d_tmp[cn][year]) / (float(f_p_tmp[cn][year]+m_p_tmp[cn][year])/100000))
+                        print "%d," % (num),
+                print "];"
+            print ""
+            gender = 'all'
+            print "// Deaths in Europe caused by %s between the years %s and %s (gender: %s, deaths per 100k people):" % (cause_name, year_start, year_end, gender)
+            print "data_array_%s['%s'] = [];" % (mode, gender)
+            for cn in eu_names:
+                print "data_array_%s['%s']['%s'] = [" % (mode, gender, cn),
+                for year in range(year_start, year_end+1):
+                    if m_a_tmp[cn][year] == 0:
+                        print 'Number.NaN,',
+                    else:
+                        num = int(float(f_d_tmp[cn][year]+m_d_tmp[cn][year]) / (float(f_p_tmp[cn][year]+m_p_tmp[cn][year])/100000))
+                        print "%d," % (num),
+                print "];"
+            print ""
 
 
 #############################   MAIN
@@ -1289,7 +1367,7 @@ elif (task == "cancer_eu"):
 
         deaths_eu(['c00','d48'], 'cancer', year_start, year_end, mode, format)
     else:
-        sys.exit("Usage: ./deaths.py cancer_eu <year_start> <year_end> <num | pop | pop2 | rel | rel2> [chartjs]")
+        sys.exit("Usage: ./deaths.py cancer_eu <year_start> <year_end> <num | pop | pop2 | rel | rel2 | 100k> [chartjs]")
 
 
 # This prints all suicides over all years in all EU and neighboring countries
