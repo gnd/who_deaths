@@ -62,6 +62,29 @@
     // causes lists
     var causes = cause_a;
 
+    // cause names
+    var cause_names_sk = { "rest" : "Zvyšné",
+                        "C34" : "Priedušky a pľúca",
+                        "C16" : "Žalúdok",
+                        "C50" : "Prsník",
+                        "C18" : "Hrubé črevo",
+                        "C20" : "Konečník",
+                        "C25" : "Pankreas",
+                        "C61" : "Prostata",
+                        "C22" : "Pečeň",
+                        "C19" : "Rektosigmoidové spojenie",
+                        "C64" : "Oblička",
+                        "C71" : "Mozog",
+                        "C67" : "Močový mechúr",
+                        "C80" : "Bez určenia",
+                        "C54" : "Telo maternice",
+                        "C56" : "Vaječník",
+                        "C53" : "Kŕčok maternice",
+                        "C23" : "Žlčník",
+                        "C25" : "Podžalúdková žľaza",
+                        "C32" : "Hrtan",
+                        "C15" : "Pažerák" };
+
     // ticks
     var years = ['1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016'];
 
@@ -126,7 +149,7 @@
         for (var i=0; i < causes.length; i++) {
             var cause = causes[i];
             window.myChart.data.datasets[i].data = data_array[gender][cause]
-            window.myChart.data.datasets[i].label = cause;
+            window.myChart.data.datasets[i].label = cause_names_sk[cause];
             window.myChart.data.datasets[i].borderColor = '#'+cause_colors[cause];
             window.myChart.data.datasets[i].pointBackgroundColor = '#'+cause_colors[cause];
         }
@@ -365,20 +388,20 @@
         data: {
             labels: years,
             datasets: [
-                { label: 'rest',data: data_array['all']['rest'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['rest'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['rest'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C34',data: data_array['all']['C34'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C34'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C34'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C16',data: data_array['all']['C16'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C16'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C16'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C50',data: data_array['all']['C50'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C50'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C50'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C18',data: data_array['all']['C18'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C18'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C18'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C20',data: data_array['all']['C20'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C20'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C20'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C25',data: data_array['all']['C25'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C25'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C25'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C61',data: data_array['all']['C61'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C61'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C61'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C22',data: data_array['all']['C22'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C22'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C22'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C19',data: data_array['all']['C19'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C19'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C19'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C64',data: data_array['all']['C64'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C64'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C64'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C71',data: data_array['all']['C71'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C71'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C71'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C67',data: data_array['all']['C67'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C67'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
-                { label: 'C80',data: data_array['all']['C80'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C80'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C80'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0}
+                { label: cause_names_sk['rest'],data: data_array['all']['rest'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['rest'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['rest'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C34'],data: data_array['all']['C34'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C34'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C34'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C16'],data: data_array['all']['C16'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C16'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C16'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C50'],data: data_array['all']['C50'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C50'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C50'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C18'],data: data_array['all']['C18'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C18'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C18'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C20'],data: data_array['all']['C20'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C20'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C20'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C25'],data: data_array['all']['C25'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C25'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C25'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C61'],data: data_array['all']['C61'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C61'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C61'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C22'],data: data_array['all']['C22'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C22'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C22'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C19'],data: data_array['all']['C19'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C19'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C19'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C64'],data: data_array['all']['C64'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C64'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C64'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C71'],data: data_array['all']['C71'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C71'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C71'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C67'],data: data_array['all']['C67'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C67'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: cause_names_sk['C80'],data: data_array['all']['C80'],spanGaps: false,borderWidth: 3,borderColor: '#'+cause_colors['C80'],pointStyle: 'cross',pointBackgroundColor: '#'+cause_colors['C80'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0}
             ]
         },
         options: {
