@@ -1,0 +1,79 @@
+// Found country Portugal with code 4240
+
+// page title
+page_title_num = 'Cancer deaths in Portugal 1994 - 2018 by age groups';
+// chart title
+chart_title_num = 'Age groups (all)';
+chart_title_stub_num = 'Age groups';
+ages = [ '0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95', ];
+data_array_num_pt = [];
+
+// Deaths in Portugal caused by cancer between the years 1994 and 2018 divided by age (gender: fem, mode: num):
+data_array_num_pt['fem'] = [];
+data_array_num_pt['fem']['0'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 16, 4, Number.NaN, Number.NaN, Number.NaN, 10, 3, 6, 10, 9, 7, 4, 9, 5, 9, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['5'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 7, 7, Number.NaN, Number.NaN, Number.NaN, 4, 6, 6, 8, 7, 10, 7, 6, 10, 5, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['10'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 14, 11, Number.NaN, Number.NaN, Number.NaN, 15, 8, 8, 6, 3, 8, 3, 6, 6, 4, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['15'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 16, 7, Number.NaN, Number.NaN, Number.NaN, 11, 8, 6, 11, 13, 9, 13, 11, 9, 10, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['20'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 36, 27, Number.NaN, Number.NaN, Number.NaN, 16, 17, 17, 19, 12, 13, 11, 8, 12, 8, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['25'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 30, 38, Number.NaN, Number.NaN, Number.NaN, 27, 28, 18, 27, 23, 20, 26, 22, 18, 8, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['30'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 64, 58, Number.NaN, Number.NaN, Number.NaN, 60, 64, 53, 56, 51, 57, 49, 40, 40, 37, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['35'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 128, 117, Number.NaN, Number.NaN, Number.NaN, 113, 113, 124, 117, 97, 107, 93, 101, 93, 105, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['40'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 229, 215, Number.NaN, Number.NaN, Number.NaN, 196, 185, 210, 185, 198, 205, 161, 182, 174, 198, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['45'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 341, 323, Number.NaN, Number.NaN, Number.NaN, 334, 325, 346, 326, 312, 338, 313, 295, 308, 296, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['50'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 468, 451, Number.NaN, Number.NaN, Number.NaN, 426, 428, 474, 477, 492, 448, 447, 450, 470, 466, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['55'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 590, 581, Number.NaN, Number.NaN, Number.NaN, 600, 631, 611, 576, 661, 603, 561, 624, 605, 648, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['60'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 781, 752, Number.NaN, Number.NaN, Number.NaN, 732, 736, 833, 765, 829, 822, 850, 788, 847, 827, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['65'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1037, 1043, Number.NaN, Number.NaN, Number.NaN, 955, 904, 965, 940, 963, 963, 1010, 1123, 1042, 1037, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['70'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1313, 1384, Number.NaN, Number.NaN, Number.NaN, 1315, 1332, 1357, 1302, 1259, 1240, 1200, 1148, 1233, 1274, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['75'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1556, 1591, Number.NaN, Number.NaN, Number.NaN, 1676, 1675, 1571, 1567, 1791, 1701, 1680, 1648, 1565, 1585, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['80'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1237, 1328, Number.NaN, Number.NaN, Number.NaN, 1595, 1694, 1710, 1758, 1821, 1770, 1843, 1843, 1883, 1928, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['85'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 945, 1524, Number.NaN, Number.NaN, Number.NaN, 1738, 1839, 1903, 2125, 2135, 2322, 2383, 1567, 1619, 1714, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['90'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 418, 0, Number.NaN, Number.NaN, Number.NaN, 0, 0, 0, 0, 0, 0, 0, 751, 823, 920, Number.NaN, Number.NaN, ];
+data_array_num_pt['fem']['95'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 93, 0, Number.NaN, Number.NaN, Number.NaN, 0, 0, 0, 0, 0, 0, 0, 183, 203, 262, Number.NaN, Number.NaN, ];
+
+// Deaths in Portugal caused by cancer between the years 1994 and 2018 divided by age (gender: man, mode: num):
+data_array_num_pt['man'] = [];
+data_array_num_pt['man']['0'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 18, 7, Number.NaN, Number.NaN, Number.NaN, 10, 9, 6, 7, 12, 6, 11, 9, 5, 9, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['5'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 16, 12, Number.NaN, Number.NaN, Number.NaN, 12, 11, 10, 12, 13, 12, 7, 12, 7, 5, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['10'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 15, 10, Number.NaN, Number.NaN, Number.NaN, 14, 11, 10, 7, 12, 12, 11, 8, 10, 11, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['15'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 20, 20, Number.NaN, Number.NaN, Number.NaN, 15, 13, 13, 17, 18, 17, 6, 18, 17, 10, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['20'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 31, 40, Number.NaN, Number.NaN, Number.NaN, 35, 28, 23, 24, 26, 20, 18, 19, 18, 18, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['25'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 40, 43, Number.NaN, Number.NaN, Number.NaN, 45, 27, 30, 22, 25, 16, 32, 27, 24, 29, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['30'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 52, 56, Number.NaN, Number.NaN, Number.NaN, 48, 54, 52, 42, 51, 54, 47, 50, 45, 37, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['35'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 121, 132, Number.NaN, Number.NaN, Number.NaN, 112, 93, 96, 100, 95, 78, 91, 77, 95, 67, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['40'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 314, 289, Number.NaN, Number.NaN, Number.NaN, 249, 235, 244, 253, 221, 224, 218, 203, 173, 186, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['45'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 466, 480, Number.NaN, Number.NaN, Number.NaN, 497, 505, 481, 495, 488, 435, 447, 413, 409, 350, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['50'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 743, 750, Number.NaN, Number.NaN, Number.NaN, 780, 834, 870, 802, 853, 833, 819, 831, 803, 808, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['55'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 946, 988, Number.NaN, Number.NaN, Number.NaN, 1066, 1083, 1094, 1151, 1145, 1215, 1204, 1232, 1184, 1244, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['60'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1278, 1308, Number.NaN, Number.NaN, Number.NaN, 1361, 1390, 1421, 1501, 1494, 1514, 1582, 1508, 1618, 1671, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['65'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1859, 1902, Number.NaN, Number.NaN, Number.NaN, 1707, 1724, 1731, 1774, 1798, 1862, 1910, 1889, 1973, 2058, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['70'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 2249, 2272, Number.NaN, Number.NaN, Number.NaN, 2165, 2226, 2200, 2232, 2172, 2129, 2122, 2102, 2216, 2216, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['75'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 2330, 2362, Number.NaN, Number.NaN, Number.NaN, 2413, 2518, 2467, 2537, 2540, 2555, 2515, 2598, 2548, 2616, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['80'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1635, 1765, Number.NaN, Number.NaN, Number.NaN, 2020, 2136, 2120, 2209, 2381, 2342, 2425, 2520, 2578, 2562, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['85'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 980, 1355, Number.NaN, Number.NaN, Number.NaN, 1625, 1708, 1818, 2026, 2054, 2325, 2276, 1685, 1670, 1835, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['90'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 298, 0, Number.NaN, Number.NaN, Number.NaN, 0, 0, 0, 0, 0, 0, 0, 612, 731, 742, Number.NaN, Number.NaN, ];
+data_array_num_pt['man']['95'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 52, 0, Number.NaN, Number.NaN, Number.NaN, 0, 0, 0, 0, 0, 0, 0, 119, 128, 144, Number.NaN, Number.NaN, ];
+
+// Deaths in Portugal caused by cancer between the years 1994 and 2018 divided by age (gender: all, mode: num):
+data_array_num_pt['all'] = [];
+data_array_num_pt['all']['0'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 34, 11, Number.NaN, Number.NaN, Number.NaN, 20, 12, 12, 17, 21, 13, 15, 18, 10, 18, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['5'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 23, 19, Number.NaN, Number.NaN, Number.NaN, 16, 17, 16, 20, 20, 22, 14, 18, 17, 10, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['10'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 29, 21, Number.NaN, Number.NaN, Number.NaN, 29, 19, 18, 13, 15, 20, 14, 14, 16, 15, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['15'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 36, 27, Number.NaN, Number.NaN, Number.NaN, 26, 21, 19, 28, 31, 26, 19, 29, 26, 20, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['20'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 67, 67, Number.NaN, Number.NaN, Number.NaN, 51, 45, 40, 43, 38, 33, 29, 27, 30, 26, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['25'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 70, 81, Number.NaN, Number.NaN, Number.NaN, 72, 55, 48, 49, 48, 36, 58, 49, 42, 37, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['30'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 116, 114, Number.NaN, Number.NaN, Number.NaN, 108, 118, 105, 98, 102, 111, 96, 90, 85, 74, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['35'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 249, 249, Number.NaN, Number.NaN, Number.NaN, 225, 206, 220, 217, 192, 185, 184, 178, 188, 172, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['40'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 543, 504, Number.NaN, Number.NaN, Number.NaN, 445, 420, 454, 438, 419, 429, 379, 385, 347, 384, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['45'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 807, 803, Number.NaN, Number.NaN, Number.NaN, 831, 830, 827, 821, 800, 773, 760, 708, 717, 646, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['50'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1211, 1201, Number.NaN, Number.NaN, Number.NaN, 1206, 1262, 1344, 1279, 1345, 1281, 1266, 1281, 1273, 1274, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['55'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1536, 1569, Number.NaN, Number.NaN, Number.NaN, 1666, 1714, 1705, 1727, 1806, 1818, 1765, 1856, 1789, 1892, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['60'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 2059, 2060, Number.NaN, Number.NaN, Number.NaN, 2093, 2126, 2254, 2266, 2323, 2336, 2432, 2296, 2465, 2498, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['65'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 2896, 2945, Number.NaN, Number.NaN, Number.NaN, 2662, 2628, 2696, 2714, 2761, 2825, 2920, 3012, 3015, 3095, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['70'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 3562, 3656, Number.NaN, Number.NaN, Number.NaN, 3480, 3558, 3557, 3534, 3431, 3369, 3322, 3250, 3449, 3490, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['75'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 3886, 3953, Number.NaN, Number.NaN, Number.NaN, 4089, 4193, 4038, 4104, 4331, 4256, 4195, 4246, 4113, 4201, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['80'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 2872, 3093, Number.NaN, Number.NaN, Number.NaN, 3615, 3830, 3830, 3967, 4202, 4112, 4268, 4363, 4461, 4490, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['85'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1925, 2879, Number.NaN, Number.NaN, Number.NaN, 3363, 3547, 3721, 4151, 4189, 4647, 4659, 3252, 3289, 3549, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['90'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 716, 0, Number.NaN, Number.NaN, Number.NaN, 0, 0, 0, 0, 0, 0, 0, 1363, 1554, 1662, Number.NaN, Number.NaN, ];
+data_array_num_pt['all']['95'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 145, 0, Number.NaN, Number.NaN, Number.NaN, 0, 0, 0, 0, 0, 0, 0, 302, 331, 406, Number.NaN, Number.NaN, ];
+
