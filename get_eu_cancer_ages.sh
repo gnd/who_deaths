@@ -15,4 +15,6 @@ do
     printf "<script src=\"data/%s_cancer_ages_pop.js\"></script>\n" $cn
     ./deaths.py cancer_deaths_by_age "cc-"$cc 1994 2018 rel chartjs > html/data/$cn"_cancer_ages_rel.js"
     printf "<script src=\"data/%s_cancer_ages_rel.js\"></script>\n" $cn
+    ./deaths.py cancer_deaths_by_age "cc-"$cc 1994 2018 100k chartjs > html/data/$cn"_cancer_ages_100k.js"
+    printf "<script src=\"data/%s_cancer_ages_100k.js\"></script>\n" $cn
 done
