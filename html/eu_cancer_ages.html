@@ -1,0 +1,467 @@
+<html>
+<head>
+    <title></title>
+    <!-- MOMENT.JS -->
+    <script src="moment.js"></script>
+    <!-- CHART.JS -->
+    <script src="Chart.min.js"></script>
+    <!-- PALETTE.JS -->
+    <script src="palette.js"></script>
+    <!-- MOBILE & DESKTOP STYLES -->
+    <link rel="stylesheet" media='screen' href="style.css"/>
+</head>
+<body style="margin: 0;">
+    <div id="nav_top" style="width: 99%; padding-left: 4%; padding-top: 0.5%; border-bottom: 1px solid black; padding-bottom: 1%;">
+        <button class="datasource" id='num' style="height: 20px; background-color: white; border: 1px; border-style: solid;" onclick="switch_datasource('num');">Number od deaths by cancer</button>
+        <button class="datasource" id='pop' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('pop');">Percentage of population dead by cancer</button>
+        <!--<button class="datasource" id='pop2' style="display: none; height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('pop2');">Percentage of population dead by cancer (relative to gender)</button> -->
+        <button class="datasource" id='rel' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('rel');">Deaths by cancer as a percentage of all deaths</button>
+        <button class="datasource" id='100k' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('100k');">Deaths by cancer per 100k citizens</button>
+    </div>
+    <div class="chart-container" style="padding-left: 1%; position: relative; width:85%; height:83%;">
+        <canvas id="full"></canvas>
+    </div>
+    <br/><br/><br/>
+    <!-- TODO fix the style to be responsive -->
+    <div id="nav_bottom" style="width: 100%; background-color: white; border: 2px; border-color: black; padding-left: 3%;">
+        <div style="float: left;">
+            <div id="gender" style="float: left; margin-right: 1vw;">
+                Gender:
+                <button id='all' style="width: 50px; height: 20px; background-color: gold; border: 0px;" onclick="switch_gender('all');">All</button>
+                <button id='fem' style="width: 50px; height: 20px; background-color: yellow; border: 0px;" onclick="switch_gender('fem');">Female</button>
+                <button id='man' style="width: 50px; height: 20px; background-color: yellow; border: 0px;" onclick="switch_gender('man');">Male</button>
+            </div>
+
+            <div id="countries" style="float: left; margin-right: 1vw; width: 60vw;">
+                Countries:
+            </div>
+
+            <div id="maxdiv" style="float: left;">
+                Max:
+                <button id='max' style="width: 80px; height: 20px; background-color: red; border: 0px;" onclick="switch_max();">Max recalc</button>
+            <div>
+        </div>
+    </div>
+</body>
+<!-- HERE LOAD ALL THE EU COUNTRIES DATA -->
+<script src="data/at_cancer_ages_num.js"></script>
+<script src="data/at_cancer_ages_pop.js"></script>
+<script src="data/at_cancer_ages_rel.js"></script>
+<script src="data/be_cancer_ages_num.js"></script>
+<script src="data/be_cancer_ages_pop.js"></script>
+<script src="data/be_cancer_ages_rel.js"></script>
+<script src="data/bg_cancer_ages_num.js"></script>
+<script src="data/bg_cancer_ages_pop.js"></script>
+<script src="data/bg_cancer_ages_rel.js"></script>
+<script src="data/cr_cancer_ages_num.js"></script>
+<script src="data/cr_cancer_ages_pop.js"></script>
+<script src="data/cr_cancer_ages_rel.js"></script>
+<script src="data/cy_cancer_ages_num.js"></script>
+<script src="data/cy_cancer_ages_pop.js"></script>
+<script src="data/cy_cancer_ages_rel.js"></script>
+<script src="data/cz_cancer_ages_num.js"></script>
+<script src="data/cz_cancer_ages_pop.js"></script>
+<script src="data/cz_cancer_ages_rel.js"></script>
+<script src="data/dn_cancer_ages_num.js"></script>
+<script src="data/dn_cancer_ages_pop.js"></script>
+<script src="data/dn_cancer_ages_rel.js"></script>
+<script src="data/ee_cancer_ages_num.js"></script>
+<script src="data/ee_cancer_ages_pop.js"></script>
+<script src="data/ee_cancer_ages_rel.js"></script>
+<script src="data/fi_cancer_ages_num.js"></script>
+<script src="data/fi_cancer_ages_pop.js"></script>
+<script src="data/fi_cancer_ages_rel.js"></script>
+<script src="data/fr_cancer_ages_num.js"></script>
+<script src="data/fr_cancer_ages_pop.js"></script>
+<script src="data/fr_cancer_ages_rel.js"></script>
+<script src="data/de_cancer_ages_num.js"></script>
+<script src="data/de_cancer_ages_pop.js"></script>
+<script src="data/de_cancer_ages_rel.js"></script>
+<script src="data/gr_cancer_ages_num.js"></script>
+<script src="data/gr_cancer_ages_pop.js"></script>
+<script src="data/gr_cancer_ages_rel.js"></script>
+<script src="data/hu_cancer_ages_num.js"></script>
+<script src="data/hu_cancer_ages_pop.js"></script>
+<script src="data/hu_cancer_ages_rel.js"></script>
+<script src="data/ie_cancer_ages_num.js"></script>
+<script src="data/ie_cancer_ages_pop.js"></script>
+<script src="data/ie_cancer_ages_rel.js"></script>
+<script src="data/ir_cancer_ages_num.js"></script>
+<script src="data/ir_cancer_ages_pop.js"></script>
+<script src="data/ir_cancer_ages_rel.js"></script>
+<script src="data/it_cancer_ages_num.js"></script>
+<script src="data/it_cancer_ages_pop.js"></script>
+<script src="data/it_cancer_ages_rel.js"></script>
+<script src="data/lv_cancer_ages_num.js"></script>
+<script src="data/lv_cancer_ages_pop.js"></script>
+<script src="data/lv_cancer_ages_rel.js"></script>
+<script src="data/lt_cancer_ages_num.js"></script>
+<script src="data/lt_cancer_ages_pop.js"></script>
+<script src="data/lt_cancer_ages_rel.js"></script>
+<script src="data/lu_cancer_ages_num.js"></script>
+<script src="data/lu_cancer_ages_pop.js"></script>
+<script src="data/lu_cancer_ages_rel.js"></script>
+<script src="data/mk_cancer_ages_num.js"></script>
+<script src="data/mk_cancer_ages_pop.js"></script>
+<script src="data/mk_cancer_ages_rel.js"></script>
+<script src="data/mt_cancer_ages_num.js"></script>
+<script src="data/mt_cancer_ages_pop.js"></script>
+<script src="data/mt_cancer_ages_rel.js"></script>
+<script src="data/md_cancer_ages_num.js"></script>
+<script src="data/md_cancer_ages_pop.js"></script>
+<script src="data/md_cancer_ages_rel.js"></script>
+<script src="data/me_cancer_ages_num.js"></script>
+<script src="data/me_cancer_ages_pop.js"></script>
+<script src="data/me_cancer_ages_rel.js"></script>
+<script src="data/nl_cancer_ages_num.js"></script>
+<script src="data/nl_cancer_ages_pop.js"></script>
+<script src="data/nl_cancer_ages_rel.js"></script>
+<script src="data/pl_cancer_ages_num.js"></script>
+<script src="data/pl_cancer_ages_pop.js"></script>
+<script src="data/pl_cancer_ages_rel.js"></script>
+<script src="data/pt_cancer_ages_num.js"></script>
+<script src="data/pt_cancer_ages_pop.js"></script>
+<script src="data/pt_cancer_ages_rel.js"></script>
+<script src="data/ro_cancer_ages_num.js"></script>
+<script src="data/ro_cancer_ages_pop.js"></script>
+<script src="data/ro_cancer_ages_rel.js"></script>
+<script src="data/rs_cancer_ages_num.js"></script>
+<script src="data/rs_cancer_ages_pop.js"></script>
+<script src="data/rs_cancer_ages_rel.js"></script>
+<script src="data/sk_cancer_ages_num.js"></script>
+<script src="data/sk_cancer_ages_pop.js"></script>
+<script src="data/sk_cancer_ages_rel.js"></script>
+<script src="data/si_cancer_ages_num.js"></script>
+<script src="data/si_cancer_ages_pop.js"></script>
+<script src="data/si_cancer_ages_rel.js"></script>
+<script src="data/es_cancer_ages_num.js"></script>
+<script src="data/es_cancer_ages_pop.js"></script>
+<script src="data/es_cancer_ages_rel.js"></script>
+<script src="data/se_cancer_ages_num.js"></script>
+<script src="data/se_cancer_ages_pop.js"></script>
+<script src="data/se_cancer_ages_rel.js"></script>
+<script src="data/ch_cancer_ages_num.js"></script>
+<script src="data/ch_cancer_ages_pop.js"></script>
+<script src="data/ch_cancer_ages_rel.js"></script>
+<script src="data/uk_cancer_ages_num.js"></script>
+<script src="data/uk_cancer_ages_pop.js"></script>
+<script src="data/uk_cancer_ages_rel.js"></script>
+<script>
+    // the graph
+    var full = document.getElementById("full").getContext('2d');
+
+    // graph height
+    var graph_height = window.innerHeight * 0.83;
+
+    // age names
+    var age_names = { "0" : "0-4",
+                            "5" : "5-9",
+                            "10" : "10-14",
+                            "15" : "15-19",
+                            "20" : "20-24",
+                            "25" : "25-29",
+                            "30" : "30-34",
+                            "35" : "35-39",
+                            "40" : "40-44",
+                            "45" : "45-49",
+                            "50" : "50-54",
+                            "55" : "55-59",
+                            "60" : "60-64",
+                            "65" : "65-69",
+                            "70" : "70-74",
+                            "75" : "75-79",
+                            "80" : "80-84",
+                            "85" : "85-89",
+                            "90" : "90-94",
+                            "95" : "95+"
+                        };
+
+    // ticks
+    var years = ['1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016'];
+
+    // countries
+    var eu_all = ["at","be","bg","cr","cy","cz","dn","ee","fi","fr","de","gr","hu","ie","ir","it","lv","lt","lu","mk","mt","md","me","nl","pl","pt","ro","rs","sk","si","es","se","ch","uk"];
+
+    // genders
+    var genders = ['fem', 'man', 'all'];
+
+    // current gender
+    var curr_gender = 'all';
+
+    // recalculate max or not
+    var recalculate_max = false;
+
+    // default country and mode
+    var country = 'sk';
+    var mode = 'num';
+    var modes = ['num', 'pop', 'rel'];
+
+    // data source
+    page_title = window['page_title_' + mode];
+    data_array = window['data_array_' + mode + '_' + country];
+    chart_title = window['chart_title_' + mode];
+    chart_title_stub = window['chart_title_stub_' + mode];
+
+    // generate palette
+    var age_colors = {};
+    for (var i=0; i < ages.length; i++) {
+        age_colors[ages[i]] = "";
+    }
+    var pal = palette('mpn65', Object.keys(age_colors).length);
+    var i = 0;
+    for (var age in age_colors) {
+        age_colors[age] = pal[i];
+        i++;
+    }
+
+    // HEX to R,G,B - taken from http://www.javascripter.net/faq/hextorgb.htm
+    function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
+    function hexToG(h) {return parseInt((cutHex(h)).substring(2,4),16)}
+    function hexToB(h) {return parseInt((cutHex(h)).substring(4,6),16)}
+    function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
+
+    // HEX to RGBA
+    function hexToRGBA(h, alpha) {
+        return "rgba(" + hexToR(h) + "," + hexToG(h) + "," + hexToB(h) + "," + alpha + ")";
+    }
+
+    // Create country buttons
+    // <button id='eu_all' style="width: 50px; height: 20px; background-color: gold; border: 0px;" onclick="switch_countries('eu_all');">EU</button>
+    function add_country_buttons() {
+        for (var i=0; i<eu_all.length; i++) {
+            button = document.createElement('button');
+            button.setAttribute('id', eu_all[i]);
+            button.setAttribute('style', "padding: 0px; width: 1.2vw; height: 20px; background-color: yellow; border: 0px; margin-right: 5px; font-size: 0.7em;");
+            button.setAttribute('onclick', "switch_countries('" + eu_all[i] + "');")
+            button.innerText = eu_all[i].toUpperCase();
+            document.getElementById('countries').appendChild(button);
+        }
+    }
+
+    // This takes care of data array switching and chart titles
+    // when choosing different genders
+    function switch_gender(gender) {
+        curr_gender = gender;
+        // change the datasets
+        for (var i=0; i < ages.length; i++) {
+            var age = ages[i];
+            window.myChart.data.datasets[i].data = data_array[gender][age]
+            window.myChart.data.datasets[i].label = age_names[age];
+            window.myChart.data.datasets[i].borderColor = '#'+age_colors[age];
+            window.myChart.data.datasets[i].pointBackgroundColor = '#'+age_colors[age];
+        }
+        // change the chart title
+        var suffix = "";
+        if (gender == 'all') {
+            suffix = "(Male + Female)"
+        }
+        if (gender == 'man') {
+            suffix = "(Male)"
+        }
+        if (gender == 'fem') {
+            suffix = "(Female)"
+        }
+        window.myChart.options.title.text = chart_title_stub + suffix;
+        // change active button color
+        for (var i=0; i< genders.length; i++) {
+            if (genders[i] == gender) {
+                document.getElementById(genders[i]).style.backgroundColor = 'gold';
+            } else {
+                document.getElementById(genders[i]).style.backgroundColor = 'yellow';
+            }
+        }
+
+        // if recalculate_max, change max chart values
+        if (recalculate_max) {
+            window.myChart.options.scales.yAxes[0].ticks.max = get_max(gender);
+        } else {
+            window.myChart.options.scales.yAxes[0].ticks.max = get_max('all');
+        }
+
+        // update chart
+        window.myChart.update();
+    }
+
+    // This chooses the active country
+    function switch_countries(in_country) {
+        country = in_country;
+        this.country = country;
+        this.mode = mode;
+
+        document.getElementById(country).style.backgroundColor = 'gold';
+        for (var i=0; i<eu_all.length; i++) {
+            if (eu_all[i] !== country) {
+                document.getElementById(eu_all[i]).style.backgroundColor = 'yellow';
+            }
+        }
+
+        // here we must load into data_array the data_array_COUNTRY_MODE array
+        data_array = this['data_array_' + mode + '_' + country];
+
+        // do the rest
+        switch_gender(curr_gender);
+    }
+
+    // for details how to construct dynamic variables in js see:
+    // https://stackoverflow.com/questions/5117127/use-dynamic-variable-names-in-javascript
+    function switch_datasource(in_mode) {
+        mode = in_mode;
+        this.country = country;
+        this.mode = in_mode;
+
+
+        data_array = this['data_array_' + mode + '_' + country];
+        page_title = this['page_title_' + mode];
+        chart_title = this['chart_title_' + mode];
+        chart_title_stub = this['chart_title_stub_' + mode];
+        chart_max = get_max(curr_gender);
+
+        for (var i=0; i<modes.length; i++) {
+            if (modes[i] == mode) {
+                document.getElementById(modes[i]).style.border = '1px';
+            } else {
+                document.getElementById(modes[i]).style.border = '0px';
+            }
+        }
+
+        window.myChart.options.scales.yAxes = [{
+            type: 'linear',
+            ticks: {
+                min: 0,
+                max: chart_max
+            },
+        }]
+
+        // do the data switching
+        switch_countries(countries);
+
+        // switch page title
+        document.title = page_title;
+    }
+
+    // TODO
+    // create a legendCallback - see: https://github.com/chartjs/Chart.js/issues/2565
+    function legendcallback(chart) {
+        var legendHtml = [];
+        legendHtml.push('<table>KAKA');
+        legendHtml.push('<tr>');
+        for (var i=0; i<chart.data.datasets.length; i++) {
+            //legendHtml.push('<td><div class="chart-legend" style="background-color:' + chart.data.datasets[i].borderColor + '"></div></td>');
+            legendHtml.push('<td><div class="chart-legend" style="background-color: gold;">NUNU</div></td>');
+            if (chart.data.datasets[i].label) {
+                legendHtml.push(
+                    '<td class="chart-legend-label-text" onclick="updateDataset(event, ' + '\'' + chart.legend.legendItems[i].datasetIndex + '\'' + ')">'
+                     + chart.data.datasets[i].label + 'NANA</td>');
+            }
+        }
+        legendHtml.push('</tr>');
+        legendHtml.push('</table>');
+        return legendHtml.join("");
+    }
+
+    // get a max for all charts
+    function get_max(gender) {
+        var max = 0;
+        var min = 0;
+        for (var i=0; i < ages.length; i++) {
+            for (var j=0; j < years.length; j++) {
+                if (max < data_array[gender][ages[i]][j]) {
+                    max = data_array[gender][ages[i]][j];
+                }
+                if (min > data_array[gender][ages[i]][j]) {
+                    min = data_array[gender][ages[i]][j];
+                }
+            }
+        }
+        if (max > 100) {
+            return Math.round(max * 1.1);
+        } else {
+            return Math.round(max * 110) / 100;
+        }
+    }
+
+    // switch max recalculation
+    function switch_max() {
+        //var gender = 'all';
+        var gender = 'fem';
+
+        if (recalculate_max) {
+            document.getElementById('max').style.backgroundColor = 'red';
+            recalculate_max = false;
+
+        } else {
+            document.getElementById('max').style.backgroundColor = 'green';
+            recalculate_max = true;
+            gender = curr_gender;
+        }
+
+        // update max
+        window.myChart.options.scales.yAxes[0].ticks.max = get_max(gender);
+
+        // update chart
+        window.myChart.update();
+    }
+
+    ////// The chart
+    var chart_max = get_max('all');
+    window.myChart = new Chart(full, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                { label: age_names['0'],data: data_array['all']['0'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['0'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['rest'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['5'],data: data_array['all']['5'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['5'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C34'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['10'],data: data_array['all']['10'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['10'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C16'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['15'],data: data_array['all']['15'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['15'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C50'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['20'],data: data_array['all']['20'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['20'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C18'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['25'],data: data_array['all']['25'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['25'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C20'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['30'],data: data_array['all']['30'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['30'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C25'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['35'],data: data_array['all']['35'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['35'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C61'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['40'],data: data_array['all']['40'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['40'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C22'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['45'],data: data_array['all']['45'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['45'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C19'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['50'],data: data_array['all']['50'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['50'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C64'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['55'],data: data_array['all']['55'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['55'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C71'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['60'],data: data_array['all']['60'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['60'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['65'],data: data_array['all']['65'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['65'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['70'],data: data_array['all']['70'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['70'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['75'],data: data_array['all']['75'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['75'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['80'],data: data_array['all']['80'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['80'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['85'],data: data_array['all']['85'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['85'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['90'],data: data_array['all']['90'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['90'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0},
+                { label: age_names['95'],data: data_array['all']['95'],spanGaps: false,borderWidth: 3,borderColor: '#'+age_colors['95'],pointStyle: 'cross',pointBackgroundColor: '#'+age_colors['C67'],pointBorderColor: 'rgb(0,0,0)',backgroundColor: 'rgba(255,0,0,0)',tension: 0}
+            ]
+        },
+        options: {
+            title: {
+                display: true,
+                text: chart_title
+            },
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'year'
+                    }
+                }],
+                yAxes: [{
+                    type: 'linear',
+                    ticks: {
+                        min: 0,
+                        max: chart_max
+                    }
+                }]
+            },
+            legendCallback: legendcallback,
+            legend: {
+                display: true
+            }
+        }
+    });
+
+    window.onload = function() {
+        document.title = page_title;
+        add_country_buttons();
+        document.getElementById(country).style.backgroundColor = 'gold';
+    };
+</script>
+</html>
