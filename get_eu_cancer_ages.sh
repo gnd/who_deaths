@@ -9,12 +9,12 @@ for index in ${!eu_codes[*]}
 do
     cn=`echo ${eu_names[$index]}| awk '{print tolower($0)}'`
     cc=${eu_codes[$index]}
-    ./deaths.py cancer_deaths_by_age "cc-"$cc 1994 2018 num chartjs > html/data/$cn"_cancer_ages_num.js"
-    printf "<script src=\"data/%s_cancer_ages_num.js\"></script>\n" $cn
-    ./deaths.py cancer_deaths_by_age "cc-"$cc 1994 2018 pop chartjs > html/data/$cn"_cancer_ages_pop.js"
-    printf "<script src=\"data/%s_cancer_ages_pop.js\"></script>\n" $cn
-    ./deaths.py cancer_deaths_by_age "cc-"$cc 1994 2018 rel chartjs > html/data/$cn"_cancer_ages_rel.js"
-    printf "<script src=\"data/%s_cancer_ages_rel.js\"></script>\n" $cn
-    ./deaths.py cancer_deaths_by_age "cc-"$cc 1994 2018 100k chartjs > html/data/$cn"_cancer_ages_100k.js"
-    printf "<script src=\"data/%s_cancer_ages_100k.js\"></script>\n" $cn
+    ./deaths.py cancer_deaths_by_age "cc-"$cc 1994 2018 num chartjs > html/data/ages/$cn"_cancer_ages_num.js"
+    printf "<script src=\"data/ages/%s_cancer_ages_num.js\"></script>\n" $cn
+    ./deaths.py cancer_deaths_by_age "cc-"$cc 1994 2018 pop chartjs > html/data/ages/$cn"_cancer_ages_pop.js"
+    printf "<script src=\"data/ages/%s_cancer_ages_pop.js\"></script>\n" $cn
+    ./deaths.py cancer_deaths_by_age "cc-"$cc 1994 2018 rel chartjs > html/data/ages/$cn"_cancer_ages_rel.js"
+    printf "<script src=\"data/ages/%s_cancer_ages_rel.js\"></script>\n" $cn
+    ./deaths.py cancer_deaths_by_age "cc-"$cc 1994 2018 100k chartjs > html/data/ages/$cn"_cancer_ages_100k.js"
+    printf "<script src=\"data/ages/%s_cancer_ages_100k.js\"></script>\n" $cn
 done
