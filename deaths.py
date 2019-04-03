@@ -12,6 +12,8 @@ import copy
 import MySQLdb
 import ConfigParser
 
+#TODO - conect to db only after checking params
+
 config = ConfigParser.ConfigParser()
 config.read("db.conf")
 dbhost = config.get("mysql", "dbhost")
@@ -41,29 +43,40 @@ def print_no_newline(string):
     sys.stdout.flush()
 
 
-def get_country(country_query):
+def get_country(country_query, cc = ''):
     ### Get the country code
-    q = "SELECT Country, name FROM %s WHERE name LIKE '%s%%';" % (country_table, country_query)
-    cur.execute(q)
-    if cur.rowcount == 0:
-        sys.exit("Cant find country like: %s" % country_query)
-    elif cur.rowcount == 1:
-        res = cur.fetchone()
-        country_code = str(res[0])
-        country_name = str(res[1])
-        print "Found country %s with code %s" % (country_name, country_code)
+    if (cc == ''):
+        q = "SELECT Country, name FROM %s WHERE name LIKE '%s%%';" % (country_table, country_query)
+        cur.execute(q)
+        if cur.rowcount == 0:
+            sys.exit("Cant find country like: %s" % country_query)
+        elif cur.rowcount == 1:
+            res = cur.fetchone()
+            country_code = str(res[0])
+            country_name = str(res[1])
+            print "// Found country %s with code %s" % (country_name, country_code)
+        else:
+            options = []
+            print "Found these countries: "
+            for row in cur.fetchall():
+                c_code = str(row[0])
+                c_name = str(row[1])
+                print "Option %d: %s" %(len(options), c_name)
+                options.append([c_code, c_name])
+            option_in = int(raw_input("Select which option do you want: "))
+            country_code = options[option_in][0]
+            country_name = options[option_in][1]
+            print "Choosing %s" % country_name
     else:
-        options = []
-        print "Found these countries: "
-        for row in cur.fetchall():
-            c_code = str(row[0])
-            c_name = str(row[1])
-            print "Option %d: %s" %(len(options), c_name)
-            options.append([c_code, c_name])
-        option_in = int(raw_input("Select which option do you want: "))
-        country_code = options[option_in][0]
-        country_name = options[option_in][1]
-        print "Choosing %s" % country_name
+        q = "SELECT Country, name FROM %s WHERE Country LIKE '%s';" % (country_table, cc)
+        cur.execute(q)
+        if cur.rowcount == 0:
+            sys.exit("Cant find country like: %s" % country_query)
+        elif cur.rowcount == 1:
+            res = cur.fetchone()
+            country_code = str(res[0])
+            country_name = str(res[1])
+            print "// Found country %s with code %s" % (country_name, country_code)
     return (country_code, country_name)
 
 
@@ -155,6 +168,7 @@ def get_causes_for_country_by_age(country_code, cause, year, sex):
     arr = []
     q = """
         SELECT year, cause,
+        Deaths1 as 'all',
         (Deaths2 + Deaths3 + Deaths4 + Deaths4 + Deaths6) as "0",
         Deaths7 as "5",
         Deaths8 as "10",
@@ -702,7 +716,7 @@ def get_deaths(country_code, cause_range, year_range):
 # This gets all deaths, population, and deaths related to cause range
 # for a given country, cause range and year range divided byy age
 #
-def get_deaths_by_age(country_code, cause_range, year_range):
+def get_deaths_by_age(country_code, cause_range, year_range, format):
     m_cause = {}
     f_cause = {}
     d_a = []
@@ -755,10 +769,12 @@ def get_deaths_by_age(country_code, cause_range, year_range):
             f_all[year] = 0
             m_die[year] = 0
             f_die[year] = 0
-            print_no_newline("n/a, ")
+            if format == 'normal':
+                print_no_newline("n/a, ")
         # Now do some maths
         else:
-            print_no_newline("%d " % year)
+            if format == 'normal':
+                print_no_newline("%d " % year)
             # males
             deaths = {}
             for entry in m_cause:
@@ -769,6 +785,10 @@ def get_deaths_by_age(country_code, cause_range, year_range):
                             deaths[key] += entry[key]
                         else:
                             deaths[key] = entry[key]
+                    if ('all' in deaths):
+                        deaths['all'] += entry['all']
+                    else:
+                        deaths['all'] = entry['all']
             m_die[year] = deaths
             # females
             deaths = {}
@@ -780,6 +800,10 @@ def get_deaths_by_age(country_code, cause_range, year_range):
                             deaths[key] += entry[key]
                         else:
                             deaths[key] = entry[key]
+                    if ('all' in deaths):
+                        deaths['all'] += entry['all']
+                    else:
+                        deaths['all'] = entry['all']
             f_die[year] = deaths
     print ""
     return(m_all, f_all, m_pop, f_pop, m_die, f_die)
@@ -856,6 +880,7 @@ def deaths(country_query, cause_range, cause_name, year_start, year_end, mode):
 #               *   percentage of country's total population in the given year (mode: pop)
 #               *   percentage of country's total deaths in the given year (mode: rel)
 #
+#TODO all of these should be called either print_* all show_* as compared to get_*
 def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, mode, format):
     m_all = {}
     f_all = {}
@@ -866,11 +891,18 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
     m_d_tmp = {}
     f_d_tmp = {}
     # Get the country code (cc) and country name cn from user
-    (cc, cn) = get_country(country_query)
+    # Also get the international country code (icc)
+    if ('cc-' in country_query):
+        in_cc = country_query.split('-')[1]
+        (cc, cn) = get_country(country_query, in_cc)
+    else:
+        (cc, cn) = get_country(country_query)
+    icc = eu_names[eu_codes.index(cc)].lower()
     cause_start = cause_range[0]
     cause_end = cause_range[1]
-    print_no_newline("Retrieving data: ")
-    (m_all,f_all,m_pop,f_pop,m_die,f_die) = get_deaths_by_age(cc, [cause_start, cause_end], [year_start, year_end])
+    if (format == 'normal'):
+        print_no_newline("Retrieving data: ")
+    (m_all,f_all,m_pop,f_pop,m_die,f_die) = get_deaths_by_age(cc, [cause_start, cause_end], [year_start, year_end], format)
 
     # oh gee now we have to flip the arrays
     for age_range in age_ranges:
@@ -925,17 +957,22 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                 print ""
             print ""
         if (format == 'chartjs'):
+            print "// page title"
+            print "page_title_%s = 'Cancer deaths in %s %s - %s by age groups';" % (mode, cn, year_start, year_end)
+            print "// chart title"
+            print "chart_title_%s = 'Age groups (all)';" % mode
+            print "chart_title_stub_%s = 'Age groups';" % mode
             print "ages = [",
             for age_range in age_ranges:
                 print "'%s'," % age_range.split('-')[0],
             print "];"
-            print "data_array_%s = [];\n" % (mode)
+            print "data_array_%s_%s = [];\n" % (mode, icc)
             gender = 'fem'
             print "// Deaths in %s caused by %s between the years %s and %s divided by age (gender: %s, mode: %s):" % (cn, cause_name, year_start, year_end, gender, mode)
-            print "data_array_%s['%s'] = [];" % (mode, gender)
+            print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
             for age_range in age_ranges:
                 key = age_range.split('-')[0]
-                print "data_array_%s['%s']['%s'] = [" % (mode, gender, key),
+                print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, key),
                 for year in range(year_start, year_end+1):
                     if f_all[year] == 0:
                         print 'Number.NaN,',
@@ -945,10 +982,10 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
             print ""
             gender = 'man'
             print "// Deaths in %s caused by %s between the years %s and %s divided by age (gender: %s, mode: %s):" % (cn, cause_name, year_start, year_end, gender, mode)
-            print "data_array_%s['%s'] = [];" % (mode, gender)
+            print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
             for age_range in age_ranges:
                 key = age_range.split('-')[0]
-                print "data_array_%s['%s']['%s'] = [" % (mode, gender, key),
+                print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, key),
                 for year in range(year_start, year_end+1):
                     if m_all[year] == 0:
                         print 'Number.NaN,',
@@ -958,10 +995,10 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
             print ""
             gender = 'all'
             print "// Deaths in %s caused by %s between the years %s and %s divided by age (gender: %s, mode: %s):" % (cn, cause_name, year_start, year_end, gender, mode)
-            print "data_array_%s['%s'] = [];" % (mode, gender)
+            print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
             for age_range in age_ranges:
                 key = age_range.split('-')[0]
-                print "data_array_%s['%s']['%s'] = [" % (mode, gender, key),
+                print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, key),
                 for year in range(year_start, year_end+1):
                     if f_all[year] == 0:
                         print 'Number.NaN,',
@@ -969,8 +1006,188 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                         print "%d," % (f_d_tmp[key][year]+m_d_tmp[key][year]),
                 print "];"
             print ""
-
-
+    if (mode == 'pop'):
+        if (format == 'normal'):
+            print "Deaths in %s caused by %s between the years %s and %s divided by age, as a percentag of the whole population (female):" % (cn, cause_name, year_start, year_end)
+            print "Year " + " ".join(age_ranges)
+            for year in range(year_start, year_end+1):
+                print year,
+                for age_range in age_ranges:
+                    key = age_range.split('-')[0]
+                    if f_all[year] == 0:
+                        print "",
+                    else:
+                        print round(float(f_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6),
+                print ""
+            print ""
+            print "Deaths in %s caused by %s between the years %s and %s divided by age, as a percentag of the whole population (male):" % (cn, cause_name, year_start, year_end)
+            print "Year " + " ".join(age_ranges)
+            for year in range(year_start, year_end+1):
+                print year,
+                for age_range in age_ranges:
+                    key = age_range.split('-')[0]
+                    if m_all[year] == 0:
+                        print "",
+                    else:
+                        print round(float(m_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6),
+                print ""
+            print ""
+            print "Deaths in %s caused by %s between the years %s and %s divided by age, as a percentag of the whole population (all):" % (cn, cause_name, year_start, year_end)
+            print "Year " + " ".join(age_ranges)
+            for year in range(year_start, year_end+1):
+                print year,
+                for age_range in age_ranges:
+                    key = age_range.split('-')[0]
+                    if f_all[year] == 0:
+                        print "",
+                    else:
+                        print round(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6),
+                print ""
+            print ""
+        if (format == 'chartjs'):
+            print "// page title"
+            print "page_title_%s = 'Cancer deaths in %s %s - %s by age groups as percentage of the population';" % (mode, cn, year_start, year_end)
+            print "// chart title"
+            print "chart_title_%s = 'Age groups (all)';" % mode
+            print "chart_title_stub_%s = 'Age groups';" % mode
+            print "ages = [",
+            for age_range in age_ranges:
+                print "'%s'," % age_range.split('-')[0],
+            print "];"
+            print "data_array_%s_%s = [];\n" % (mode, icc)
+            gender = 'fem'
+            print "// Deaths in %s caused by %s between the years %s and %s divided by age, as a percentag of the whole population (gender: %s, mode: %s):" % (cn, cause_name, year_start, year_end, gender, mode)
+            print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
+            for age_range in age_ranges:
+                key = age_range.split('-')[0]
+                print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, key),
+                for year in range(year_start, year_end+1):
+                    if f_all[year] == 0:
+                        print 'Number.NaN,',
+                    else:
+                        num = round(float(f_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6)
+                        print "%f," % (num),
+                print "];"
+            print ""
+            gender = 'man'
+            print "// Deaths in %s caused by %s between the years %s and %s divided by age, as a percentag of the whole population (gender: %s, mode: %s):" % (cn, cause_name, year_start, year_end, gender, mode)
+            print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
+            for age_range in age_ranges:
+                key = age_range.split('-')[0]
+                print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, key),
+                for year in range(year_start, year_end+1):
+                    if m_all[year] == 0:
+                        print 'Number.NaN,',
+                    else:
+                        num = round(float(m_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6)
+                        print "%f," % (num),
+                print "];"
+            print ""
+            gender = 'all'
+            print "// Deaths in %s caused by %s between the years %s and %s divided by age, as a percentag of the whole population (gender: %s, mode: %s):" % (cn, cause_name, year_start, year_end, gender, mode)
+            print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
+            for age_range in age_ranges:
+                key = age_range.split('-')[0]
+                print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, key),
+                for year in range(year_start, year_end+1):
+                    if f_all[year] == 0:
+                        print 'Number.NaN,',
+                    else:
+                        num = round(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6)
+                        print "%f," % (num),
+                print "];"
+            print ""
+    if (mode == 'rel'):
+        if (format == 'normal'):
+            print "Deaths in %s caused by %s between the years %s and %s divided by age, as percentage of all cancer deaths (female):" % (cn, cause_name, year_start, year_end)
+            print "Year " + " ".join(age_ranges)
+            for year in range(year_start, year_end+1):
+                print year,
+                for age_range in age_ranges:
+                    key = age_range.split('-')[0]
+                    if f_all[year] == 0:
+                        print "",
+                    else:
+                        print round(float(f_d_tmp[key][year]) / (f_die[year]['all']+m_die[year]['all']) * 100,6),
+                print ""
+            print ""
+            print "Deaths in %s caused by %s between the years %s and %s divided by age, as percentage of all cancer deaths (male):" % (cn, cause_name, year_start, year_end)
+            print "Year " + " ".join(age_ranges)
+            for year in range(year_start, year_end+1):
+                print year,
+                for age_range in age_ranges:
+                    key = age_range.split('-')[0]
+                    if m_all[year] == 0:
+                        print "",
+                    else:
+                        print round(float(m_d_tmp[key][year]) / (f_die[year]['all']+m_die[year]['all']) * 100,6),
+                print ""
+            print ""
+            print "Deaths in %s caused by %s between the years %s and %s divided by age, as percentage of all cancer deaths (all):" % (cn, cause_name, year_start, year_end)
+            print "Year " + " ".join(age_ranges)
+            for year in range(year_start, year_end+1):
+                print year,
+                for age_range in age_ranges:
+                    key = age_range.split('-')[0]
+                    if f_all[year] == 0:
+                        print "",
+                    else:
+                        print round(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (f_die[year]['all']+m_die[year]['all']) * 100,6),
+                print ""
+            print ""
+        if (format == 'chartjs'):
+            print "// page title"
+            print "page_title_%s = 'Cancer deaths in %s %s - %s by age groups as percentage of all cancer deaths';" % (mode, cn, year_start, year_end)
+            print "// chart title"
+            print "chart_title_%s = 'Age groups (all)';" % mode
+            print "chart_title_stub_%s = 'Age groups';" % mode
+            print "ages = [",
+            for age_range in age_ranges:
+                print "'%s'," % age_range.split('-')[0],
+            print "];"
+            print "data_array_%s_%s = [];\n" % (mode, icc)
+            gender = 'fem'
+            print "// Deaths in %s caused by %s between the years %s and %s divided by age, as percentage of all cancer deaths (gender: %s, mode: %s):" % (cn, cause_name, year_start, year_end, gender, mode)
+            print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
+            for age_range in age_ranges:
+                key = age_range.split('-')[0]
+                print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, key),
+                for year in range(year_start, year_end+1):
+                    if f_all[year] == 0:
+                        print 'Number.NaN,',
+                    else:
+                        num = round(float(f_d_tmp[key][year]) / (f_die[year]['all']+m_die[year]['all']) * 100,6)
+                        print "%f," % (num),
+                print "];"
+            print ""
+            gender = 'man'
+            print "// Deaths in %s caused by %s between the years %s and %s divided by age, as percentage of all cancer deaths (gender: %s, mode: %s):" % (cn, cause_name, year_start, year_end, gender, mode)
+            print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
+            for age_range in age_ranges:
+                key = age_range.split('-')[0]
+                print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, key),
+                for year in range(year_start, year_end+1):
+                    if m_all[year] == 0:
+                        print 'Number.NaN,',
+                    else:
+                        num = round(float(m_d_tmp[key][year]) / (f_die[year]['all']+m_die[year]['all']) * 100,6)
+                        print "%f," % (num),
+                print "];"
+            print ""
+            gender = 'all'
+            print "// Deaths in %s caused by %s between the years %s and %s divided by age, as percentage of all cancer deaths (gender: %s, mode: %s):" % (cn, cause_name, year_start, year_end, gender, mode)
+            print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
+            for age_range in age_ranges:
+                key = age_range.split('-')[0]
+                print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, key),
+                for year in range(year_start, year_end+1):
+                    if f_all[year] == 0:
+                        print 'Number.NaN,',
+                    else:
+                        num = round(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (f_die[year]['all']+m_die[year]['all']) * 100,6)
+                        print "%f," % (num),
+                print "];"
+            print ""
 
 
 
