@@ -1,0 +1,56 @@
+// Found country Spain with code 4280
+var cause_f_es = [ 'rest', 'C50', 'C18', 'C16', 'C34', 'C25', 'C56', 'C22', 'C71', 'C85', 'C20', 'C54', ];
+var cause_m_es = [ 'rest', 'C34', 'C61', 'C18', 'C16', 'C67', 'C22', 'C25', 'C32', 'C15', 'C20', 'C71', ];
+var cause_a_es = [ 'rest', 'C34', 'C18', 'C16', 'C50', 'C61', 'C22', 'C67', 'C25', 'C20', 'C71', ];
+
+// page title
+page_title_rel = 'Development of cancer causes bettwen the years 1994 and 2018 in Spain';
+// chart title
+chart_title_rel = 'Cancer causes (all)';
+chart_title_stub_rel = 'Cancer causes';
+
+// Development of cancer causes bettwen the years 1994 and 2018 in Spain (gender: man, %% of all deaths):
+data_array_rel_es = [];
+data_array_rel_es['man'] = [];
+data_array_rel_es['man']['rest'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 4.193153, 4.364933, 4.420349, 4.347855, 4.251262, 4.392193, 4.256022, 4.416665, 4.307053, 4.286321, 4.336358, 4.233494, 4.215163, 4.162047, 4.346849, 4.336472, 4.173785, Number.NaN, Number.NaN, ];
+data_array_rel_es['man']['C34'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 4.206929, 4.289229, 4.507805, 4.334839, 4.292306, 4.471762, 4.293219, 4.544550, 4.457637, 4.439280, 4.488833, 4.524313, 4.505931, 4.382925, 4.497476, 4.343784, 4.079581, Number.NaN, Number.NaN, ];
+data_array_rel_es['man']['C61'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1.521145, 1.513911, 1.571373, 1.540348, 1.456755, 1.530917, 1.422984, 1.456883, 1.449031, 1.414357, 1.434535, 1.537769, 1.555511, 1.500186, 1.482254, 1.481191, 1.362384, Number.NaN, Number.NaN, ];
+data_array_rel_es['man']['C18'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1.247906, 1.315238, 1.401434, 1.369983, 1.372821, 1.490319, 1.436667, 1.519337, 1.535184, 1.546372, 1.627816, 1.708427, 1.723850, 1.721553, 1.778602, 1.759341, 1.577971, Number.NaN, Number.NaN, ];
+data_array_rel_es['man']['C16'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1.019127, 1.039702, 1.044621, 0.967940, 0.920153, 0.970869, 0.916214, 0.953489, 0.911871, 0.889152, 0.917821, 0.942555, 0.876747, 0.864127, 0.881873, 0.842281, 0.788276, Number.NaN, Number.NaN, ];
+data_array_rel_es['man']['C67'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.870110, 0.885981, 0.936880, 0.947595, 0.927168, 0.998026, 0.948225, 1.007327, 0.974410, 0.990620, 1.001215, 1.055628, 1.070866, 1.072093, 1.073462, 0.985019, 0.913463, Number.NaN, Number.NaN, ];
+data_array_rel_es['man']['C22'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.751545, 0.773325, 0.802486, 0.791333, 0.749167, 0.784549, 0.743762, 0.789816, 0.785756, 0.774998, 0.781694, 0.822674, 0.854061, 0.839311, 0.863942, 0.859209, 0.817620, Number.NaN, Number.NaN, ];
+data_array_rel_es['man']['C25'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.555372, 0.576318, 0.638378, 0.608217, 0.620798, 0.657375, 0.624748, 0.683486, 0.695970, 0.719086, 0.709735, 0.785242, 0.775693, 0.774537, 0.811692, 0.808177, 0.783543, Number.NaN, Number.NaN, ];
+data_array_rel_es['man']['C32'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.482616, 0.491133, 0.478993, 0.452230, 0.422267, 0.418086, 0.395245, 0.398946, 0.365631, 0.385169, 0.360842, 0.376656, 0.369156, 0.347438, 0.330669, 0.309477, 0.290605, Number.NaN, Number.NaN, ];
+data_array_rel_es['man']['C15'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.408512, 0.431475, 0.430399, 0.407739, 0.412392, 0.427764, 0.392921, 0.402984, 0.393915, 0.401994, 0.390718, 0.400211, 0.409115, 0.382926, 0.386508, 0.390319, 0.384790, Number.NaN, Number.NaN, ];
+data_array_rel_es['man']['C20'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.368093, 0.380143, 0.398466, 0.413707, 0.381209, 0.389585, 0.386209, 0.418329, 0.412081, 0.411054, 0.431763, 0.491563, 0.476914, 0.479216, 0.459506, 0.457772, 0.454838, Number.NaN, Number.NaN, ];
+data_array_rel_es['man']['C71'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.305304, 0.339632, 0.336545, 0.363790, 0.356784, 0.361084, 0.333287, 0.373911, 0.380941, 0.366791, 0.362399, 0.392098, 0.403959, 0.399801, 0.403413, 0.396887, 0.379348, Number.NaN, Number.NaN, ];
+
+// Development of cancer causes bettwen the years 1994 and 2018 in Spain (gender: fem, %% of all deaths):
+data_array_rel_es['fem'] = [];
+data_array_rel_es['fem']['rest'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 3.493336, 3.660981, 3.686443, 3.616464, 3.522631, 3.655772, 3.528516, 3.752567, 3.627956, 3.620568, 3.685595, 3.643518, 3.748821, 3.641381, 3.741862, 3.668247, 3.527965, Number.NaN, Number.NaN, ];
+data_array_rel_es['fem']['C50'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1.531653, 1.575233, 1.642182, 1.565848, 1.536531, 1.568290, 1.478488, 1.603325, 1.552569, 1.566302, 1.592227, 1.647702, 1.627693, 1.559001, 1.658987, 1.574162, 1.475503, Number.NaN, Number.NaN, ];
+data_array_rel_es['fem']['C18'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1.042032, 1.118785, 1.130699, 1.105753, 1.088798, 1.145365, 1.108544, 1.153502, 1.165918, 1.198475, 1.189817, 1.233879, 1.288956, 1.198908, 1.256599, 1.220978, 1.149641, Number.NaN, Number.NaN, ];
+data_array_rel_es['fem']['C16'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.643489, 0.650681, 0.652262, 0.601707, 0.603127, 0.591504, 0.550399, 0.585230, 0.579455, 0.567658, 0.561915, 0.588933, 0.568430, 0.545975, 0.559143, 0.555796, 0.514712, Number.NaN, Number.NaN, ];
+data_array_rel_es['fem']['C34'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.483693, 0.522210, 0.543136, 0.574036, 0.587796, 0.654148, 0.637399, 0.709060, 0.725813, 0.789234, 0.811050, 0.902245, 0.922634, 0.949497, 1.051435, 1.024934, 1.031077, Number.NaN, Number.NaN, ];
+data_array_rel_es['fem']['C25'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.475880, 0.533586, 0.532307, 0.553692, 0.530886, 0.565691, 0.560468, 0.624801, 0.595285, 0.635479, 0.652061, 0.710907, 0.722589, 0.708525, 0.735107, 0.780133, 0.732428, Number.NaN, Number.NaN, ];
+data_array_rel_es['fem']['C56'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.431418, 0.445350, 0.470662, 0.460639, 0.457347, 0.460566, 0.448426, 0.473783, 0.478772, 0.474213, 0.471511, 0.508576, 0.493928, 0.468296, 0.479741, 0.494152, 0.463831, Number.NaN, Number.NaN, ];
+data_array_rel_es['fem']['C22'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.408512, 0.407613, 0.416514, 0.414522, 0.393423, 0.407868, 0.378205, 0.405406, 0.393396, 0.397076, 0.415916, 0.425078, 0.413241, 0.405510, 0.437734, 0.417857, 0.376034, Number.NaN, Number.NaN, ];
+data_array_rel_es['fem']['C71'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.267311, 0.266376, 0.275455, 0.285932, 0.269211, 0.280427, 0.285268, 0.301499, 0.285184, 0.286288, 0.289140, 0.297869, 0.311927, 0.322125, 0.329646, 0.318824, 0.303146, Number.NaN, Number.NaN, ];
+data_array_rel_es['fem']['C85'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.256803, 0.262492, 0.283508, 0.254192, 0.242706, 0.247087, 0.235442, 0.236892, 0.220053, 0.227530, 0.226273, 0.211231, 0.222474, 0.225090, 0.220276, 0.214739, 0.187899, Number.NaN, Number.NaN, ];
+data_array_rel_es['fem']['C20'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.240365, 0.250561, 0.237969, 0.263145, 0.246604, 0.268327, 0.230538, 0.245775, 0.224465, 0.239695, 0.267319, 0.271956, 0.273259, 0.265293, 0.286615, 0.272592, 0.261023, Number.NaN, Number.NaN, ];
+data_array_rel_es['fem']['C54'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.201293, 0.212268, 0.227140, 0.220282, 0.223216, 0.211866, 0.209626, 0.242544, 0.229654, 0.236331, 0.236664, 0.274050, 0.287437, 0.264549, 0.302495, 0.284970, 0.276405, Number.NaN, Number.NaN, ];
+
+// Development of cancer causes bettwen the years 1994 and 2018 in Spain (gender: all, %% of all deaths):
+data_array_rel_es['all'] = [];
+data_array_rel_es['all']['rest'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 9.256171, 9.653350, 9.777277, 9.549447, 9.326787, 9.586941, 9.254012, 9.696116, 9.394992, 9.386713, 9.461403, 9.391511, 9.484156, 9.237112, 9.533330, 9.447010, 9.065298, Number.NaN, Number.NaN, ];
+data_array_rel_es['all']['C34'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 4.690625, 4.811440, 5.050939, 4.908875, 4.880102, 5.125910, 4.930619, 5.253609, 5.183451, 5.228514, 5.299884, 5.426558, 5.428565, 5.332423, 5.548910, 5.368720, 5.110657, Number.NaN, Number.NaN, ];
+data_array_rel_es['all']['C18'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 2.289936, 2.434020, 2.532134, 2.475735, 2.461618, 2.635683, 2.545210, 2.672837, 2.701104, 2.744848, 2.817633, 2.942308, 3.012804, 2.920460, 3.035199, 2.980319, 2.727609, Number.NaN, Number.NaN, ];
+data_array_rel_es['all']['C16'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1.662615, 1.690384, 1.696883, 1.569647, 1.523278, 1.562373, 1.466612, 1.538718, 1.491328, 1.456809, 1.479739, 1.531487, 1.445177, 1.410100, 1.441016, 1.398075, 1.302985, Number.NaN, Number.NaN, ];
+data_array_rel_es['all']['C50'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1.556174, 1.590495, 1.658287, 1.584838, 1.553162, 1.583884, 1.495268, 1.620553, 1.568919, 1.584681, 1.610672, 1.667595, 1.649605, 1.582081, 1.687674, 1.597909, 1.493251, Number.NaN, Number.NaN, ];
+data_array_rel_es['all']['C61'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1.521145, 1.513911, 1.571373, 1.540348, 1.456755, 1.530917, 1.422984, 1.456883, 1.449031, 1.414357, 1.434535, 1.537769, 1.555511, 1.500186, 1.482254, 1.481191, 1.362384, Number.NaN, Number.NaN, ];
+data_array_rel_es['all']['C22'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1.160059, 1.180939, 1.219001, 1.205857, 1.142588, 1.192417, 1.121968, 1.195225, 1.179153, 1.172073, 1.197611, 1.247753, 1.267301, 1.244820, 1.301678, 1.277065, 1.193654, Number.NaN, Number.NaN, ];
+data_array_rel_es['all']['C67'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1.056581, 1.086040, 1.140972, 1.138578, 1.115564, 1.208817, 1.143653, 1.218375, 1.186159, 1.217631, 1.229306, 1.291988, 1.310868, 1.303636, 1.319864, 1.212642, 1.135675, Number.NaN, Number.NaN, ];
+data_array_rel_es['all']['C25'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 1.031252, 1.109906, 1.170685, 1.161908, 1.151685, 1.223067, 1.185218, 1.308287, 1.291257, 1.354564, 1.361794, 1.496150, 1.498281, 1.483064, 1.546799, 1.588308, 1.515969, Number.NaN, Number.NaN, ];
+data_array_rel_es['all']['C20'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.608458, 0.630704, 0.636435, 0.676852, 0.627813, 0.657912, 0.616747, 0.664104, 0.636546, 0.650749, 0.699083, 0.763519, 0.750172, 0.744509, 0.746121, 0.730364, 0.715861, Number.NaN, Number.NaN, ];
+data_array_rel_es['all']['C71'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.572620, 0.606009, 0.612000, 0.649726, 0.625994, 0.641512, 0.618554, 0.675410, 0.666128, 0.653080, 0.651542, 0.689966, 0.715887, 0.721926, 0.733058, 0.715712, 0.682493, Number.NaN, Number.NaN, ];
+

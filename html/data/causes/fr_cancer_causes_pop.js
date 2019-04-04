@@ -1,0 +1,52 @@
+// Found country France with code 4080
+var cause_f_fr = [ 'rest', 'C50', 'C18', 'C34', 'C56', 'C25', 'C16', 'C85', 'C22', 'C55', 'C71', ];
+var cause_m_fr = [ 'rest', 'C34', 'C61', 'C18', 'C22', 'C25', 'C15', 'C67', 'C16', 'C76', 'C39', ];
+var cause_a_fr = [ 'rest', 'C34', 'C18', 'C50', 'C61', 'C25', 'C22', 'C16', 'C67', 'C15', ];
+
+// page title
+page_title_pop = 'Development of cancer causes bettwen the years 1994 and 2018 in France';
+// chart title
+chart_title_pop = 'Cancer causes (all)';
+chart_title_stub_pop = 'Cancer causes';
+
+// Development of cancer causes bettwen the years 1994 and 2018 in France (gender: man, %% of the population):
+data_array_pop_fr = [];
+data_array_pop_fr['man'] = [];
+data_array_pop_fr['man']['rest'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.055546, 0.055363, 0.054705, 0.054051, 0.052178, 0.052686, 0.052050, 0.052039, 0.051939, 0.052080, 0.049949, 0.049732, 0.049761, 0.049173, 0.050422, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['man']['C34'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.034839, 0.034773, 0.034901, 0.034825, 0.035214, 0.035834, 0.035698, 0.035675, 0.035500, 0.035679, 0.035266, 0.035334, 0.035090, 0.034730, 0.035053, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['man']['C61'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.015417, 0.015347, 0.015535, 0.015706, 0.015068, 0.014917, 0.014509, 0.014578, 0.014331, 0.014346, 0.014377, 0.013925, 0.013498, 0.013468, 0.013134, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['man']['C18'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.010345, 0.010508, 0.010417, 0.010413, 0.010681, 0.010462, 0.010241, 0.010233, 0.010301, 0.010454, 0.010503, 0.010299, 0.010406, 0.010058, 0.010040, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['man']['C22'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.008522, 0.008810, 0.008683, 0.008762, 0.008736, 0.008947, 0.008954, 0.008836, 0.008808, 0.009041, 0.009322, 0.009109, 0.009219, 0.009267, 0.009353, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['man']['C25'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.006165, 0.006326, 0.006388, 0.006484, 0.006632, 0.006874, 0.006914, 0.007151, 0.007536, 0.007397, 0.007522, 0.007516, 0.007618, 0.008062, 0.008321, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['man']['C15'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.005903, 0.005700, 0.005747, 0.005540, 0.005244, 0.005340, 0.005075, 0.005063, 0.005009, 0.004940, 0.004962, 0.004703, 0.004783, 0.004512, 0.004571, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['man']['C67'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.005518, 0.005413, 0.005492, 0.005770, 0.005655, 0.005879, 0.005756, 0.005885, 0.005620, 0.005804, 0.006179, 0.006130, 0.006210, 0.005870, 0.006107, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['man']['C16'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.005360, 0.005238, 0.005264, 0.005072, 0.005125, 0.004993, 0.004948, 0.004883, 0.004658, 0.004736, 0.004634, 0.004736, 0.004626, 0.004680, 0.004618, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['man']['C76'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.004516, 0.004739, 0.004824, 0.004674, 0.004516, 0.004528, 0.004330, 0.004375, 0.004137, 0.004225, 0.004270, 0.000356, 0.000458, 0.000449, 0.000405, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['man']['C39'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.000195, 0.000262, 0.000236, 0.000237, 0.000212, 0.000249, 0.000232, 0.000197, 0.000177, 0.000183, 0.000202, 0.004027, 0.003918, 0.003769, 0.003703, Number.NaN, Number.NaN, Number.NaN, ];
+
+// Development of cancer causes bettwen the years 1994 and 2018 in France (gender: fem, %% of the population):
+data_array_pop_fr['fem'] = [];
+data_array_pop_fr['fem']['rest'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.040946, 0.040901, 0.040778, 0.040949, 0.040078, 0.040499, 0.039650, 0.038973, 0.040014, 0.040672, 0.039647, 0.039740, 0.039866, 0.039344, 0.040368, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['fem']['C50'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.018592, 0.018503, 0.018721, 0.018499, 0.018468, 0.018539, 0.018574, 0.018364, 0.018674, 0.018554, 0.018770, 0.018280, 0.018405, 0.018310, 0.018636, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['fem']['C18'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.009710, 0.009700, 0.009704, 0.010006, 0.009532, 0.009681, 0.009501, 0.009456, 0.009758, 0.009584, 0.009342, 0.009662, 0.009563, 0.009358, 0.009115, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['fem']['C34'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.007179, 0.007473, 0.008232, 0.008656, 0.008998, 0.009735, 0.010214, 0.010462, 0.010958, 0.011658, 0.011765, 0.012053, 0.012966, 0.012553, 0.013866, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['fem']['C56'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.005450, 0.005447, 0.005533, 0.005398, 0.005331, 0.005435, 0.005426, 0.005414, 0.005480, 0.005289, 0.005554, 0.005487, 0.005389, 0.005291, 0.005305, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['fem']['C25'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.005442, 0.005933, 0.006057, 0.005869, 0.006146, 0.006324, 0.006500, 0.006765, 0.006957, 0.007143, 0.007180, 0.007262, 0.007515, 0.007798, 0.007851, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['fem']['C16'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.003414, 0.003309, 0.003316, 0.003009, 0.003023, 0.002933, 0.002785, 0.002678, 0.002798, 0.002686, 0.002620, 0.002663, 0.002604, 0.002634, 0.002522, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['fem']['C85'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.003055, 0.002884, 0.002906, 0.002650, 0.002561, 0.002531, 0.002406, 0.002329, 0.002419, 0.002299, 0.002305, 0.002165, 0.002192, 0.002080, 0.002063, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['fem']['C22'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.002715, 0.002813, 0.002951, 0.003025, 0.002992, 0.003085, 0.003146, 0.003067, 0.003338, 0.003265, 0.003432, 0.003473, 0.003432, 0.003464, 0.003470, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['fem']['C55'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.002684, 0.002710, 0.002723, 0.002728, 0.002711, 0.002597, 0.002805, 0.002802, 0.002650, 0.002571, 0.002563, 0.002607, 0.002599, 0.002471, 0.002479, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['fem']['C71'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.002117, 0.002226, 0.002069, 0.002164, 0.002047, 0.002028, 0.002006, 0.002076, 0.002190, 0.002081, 0.002320, 0.002255, 0.002348, 0.002398, 0.002386, Number.NaN, Number.NaN, Number.NaN, ];
+
+// Development of cancer causes bettwen the years 1994 and 2018 in France (gender: all, %% of the population):
+data_array_pop_fr['all'] = [];
+data_array_pop_fr['all']['rest'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.111419, 0.111344, 0.110529, 0.109594, 0.106276, 0.107270, 0.105580, 0.104695, 0.105587, 0.105975, 0.103365, 0.102911, 0.103269, 0.101753, 0.103653, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['all']['C34'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.042020, 0.042247, 0.043133, 0.043480, 0.044211, 0.045570, 0.045912, 0.046136, 0.046456, 0.047339, 0.047032, 0.047387, 0.048056, 0.047283, 0.048923, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['all']['C18'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.020056, 0.020206, 0.020122, 0.020418, 0.020212, 0.020141, 0.019740, 0.019690, 0.020060, 0.020036, 0.019844, 0.019958, 0.019970, 0.019418, 0.019154, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['all']['C50'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.018793, 0.018801, 0.019030, 0.018806, 0.018805, 0.018868, 0.018883, 0.018718, 0.018983, 0.018874, 0.019041, 0.018449, 0.018572, 0.018507, 0.018876, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['all']['C61'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.015417, 0.015347, 0.015535, 0.015706, 0.015068, 0.014917, 0.014509, 0.014578, 0.014331, 0.014346, 0.014377, 0.013925, 0.013498, 0.013468, 0.013134, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['all']['C25'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.011606, 0.012262, 0.012443, 0.012353, 0.012776, 0.013196, 0.013414, 0.013918, 0.014495, 0.014539, 0.014702, 0.014778, 0.015129, 0.015861, 0.016172, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['all']['C22'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.011238, 0.011621, 0.011633, 0.011788, 0.011725, 0.012032, 0.012102, 0.011902, 0.012146, 0.012306, 0.012753, 0.012583, 0.012650, 0.012730, 0.012823, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['all']['C16'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.008774, 0.008547, 0.008576, 0.008080, 0.008146, 0.007925, 0.007734, 0.007560, 0.007457, 0.007421, 0.007254, 0.007396, 0.007229, 0.007313, 0.007138, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['all']['C67'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.007227, 0.007138, 0.007171, 0.007570, 0.007540, 0.007725, 0.007613, 0.007783, 0.007487, 0.007588, 0.008047, 0.008058, 0.008100, 0.007668, 0.008030, Number.NaN, Number.NaN, Number.NaN, ];
+data_array_pop_fr['all']['C15'] = [ Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, Number.NaN, 0.007083, 0.006859, 0.006991, 0.006664, 0.006374, 0.006437, 0.006229, 0.006307, 0.006239, 0.006247, 0.006238, 0.006037, 0.005976, 0.005726, 0.005857, Number.NaN, Number.NaN, Number.NaN, ];
