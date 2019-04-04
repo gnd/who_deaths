@@ -235,7 +235,7 @@ def generate_causes(cause_range):
 #
 # This gets all the cases in a given year for a given cause_range
 #
-def get_causes(cause_range, country_code, country_name, year, short):
+def get_causes(cause_range, country_code, country_name, year, short, format = 'normal'):
     m_all = {}
     f_all = {}
     m_cause = []
@@ -266,13 +266,16 @@ def get_causes(cause_range, country_code, country_name, year, short):
     f_all[year] = fda
     m_pop[year] = population(country_code, year, 1)
     f_pop[year] = population(country_code, year, 2)
-    if ((mda == 0) | (fda == 0)):
-        print "Processing data for %d .. no data" % year
+    #print "Year: %d fpop: %d mpop: %d" % (year, m_pop[year], f_pop[year])
+    if ((mda == 0) | (fda == 0) | (m_pop[year] == 0) | (f_pop[year] == 0)):
+        if (format == 'normal'):
+            print "Processing data for %d .. no data" % year
         m_cause_assoc[year] = 0
         f_cause_assoc[year] = 0
         a_cause_assoc[year] = 0
     else:
-        print "Processing data for %d" % year
+        if (format == 'normal'):
+            print "Processing data for %d" % year
         m_cause_assoc[year] = []
         f_cause_assoc[year] = []
         a_cause_assoc[year] = []
@@ -423,11 +426,18 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
     m_cause_assoc = {}
     f_cause_assoc = {}
     a_cause_assoc = {}
-    (cc, cn) = get_country(country_query)
+    # Get the country code (cc) and country name cn from user
+    # Also get the international country code (icc)
+    if ('cc-' in country_query):
+        in_cc = country_query.split('-')[1]
+        (cc, cn) = get_country(country_query, in_cc)
+    else:
+        (cc, cn) = get_country(country_query)
+    icc = eu_names[eu_codes.index(cc)].lower()
     cause_start = 'c00'
     cause_end = 'd48'
     for year in range(year_start, year_end):
-        (m, f, a) = get_causes([cause_start,cause_end], cc, cn, year, True)
+        (m, f, a) = get_causes([cause_start,cause_end], cc, cn, year, True, format)
         m_cause_assoc[year] = m[year]
         f_cause_assoc[year] = f[year]
         a_cause_assoc[year] = a[year]
@@ -451,7 +461,6 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
             for entry in a_cause_assoc[year][0:10]:
                 if entry['cc'] not in cause_pool_a:
                     cause_pool_a.append(entry['cc'])
-                    print entry['cc']
 
     # create the output arrays
     output_m = {}
@@ -555,18 +564,18 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
         print ""
     if (format == 'chartjs'):
         # print causes for mfa
-        print "var cause_f = [",
+        print "var cause_f_%s = [" % icc,
         for cause in cause_pool_f:
             print "'%s'," % cause,
         print "];"
-        print "var cause_m = [",
+        print "var cause_m_%s = [" % icc,
         for cause in cause_pool_m:
             print "'%s'," % cause,
         print "];"
-        print "var cause_a = [",
+        print "var cause_a_%s = [" % icc,
         for cause in cause_pool_a:
             print "'%s'," % cause,
-        print "];"
+        print "];\n"
         # some output text formatting
         if (mode == 'num'):
             suffix = 'number of deaths'
@@ -578,60 +587,74 @@ def cancer_top10_full(country_query, year_start, year_end, mode, format):
             suffix = 'number of deaths on 100k citizens'
         # print the male output arrays
         gender = 'man'
+        print "// page title"
+        print "page_title_%s = 'Development of cancer causes bettwen the years %d and %d in %s';" % (mode, year_start, year_end, cn)
+        print "// chart title"
+        print "chart_title_%s = 'Cancer causes (all)';" % mode
+        print "chart_title_stub_%s = 'Cancer causes';\n" % mode
         print "// Development of cancer causes bettwen the years %d and %d in %s (gender: %s, %s):" % (year_start, year_end, cn, gender, suffix)
-        print "data_array_%s = [];" % mode
-        print "data_array_%s['%s'] = [];" % (mode, gender)
+        print "data_array_%s_%s = [];" % (mode, icc)
+        print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
         for cause in cause_pool_m:
-            print "data_array_%s['%s']['%s'] = [" % (mode, gender, cause),
+            print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, cause),
             for year in range(year_start, year_end):
                 if (m_cause_assoc[year] != 0):
-                    num = round(output_m[year][cause][mode],6)
-                    if (mode == 'num'):
-                        print "%d," % (num),
-                    elif (mode == '100k'):
-                        print "%d," % (num),
+                    if (cause in output_m[year].keys()):
+                        num = round(output_m[year][cause][mode],6)
+                        if (mode == 'num'):
+                            print "%d," % (num),
+                        elif (mode == '100k'):
+                            print "%d," % (num),
+                        else:
+                            print "%f," % (num),
                     else:
-                        print "%f," % (num),
+                        print 'Number.NaN,',
                 else:
-                    'Number.NaN,',
+                    print 'Number.NaN,',
             print "];"
         print ""
         # print the female output arrays
         gender = 'fem'
         print "// Development of cancer causes bettwen the years %d and %d in %s (gender: %s, %s):" % (year_start, year_end, cn, gender, suffix)
-        print "data_array_%s['%s'] = [];" % (mode, gender)
+        print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
         for cause in cause_pool_f:
-            print "data_array_%s['%s']['%s'] = [" % (mode, gender, cause),
+            print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, cause),
             for year in range(year_start, year_end):
                 if (f_cause_assoc[year] != 0):
-                    num = round(output_f[year][cause][mode],6)
-                    if (mode == 'num'):
-                        print "%d," % (num),
-                    elif (mode == '100k'):
-                        print "%d," % (num),
+                    if (cause in output_f[year].keys()):
+                        num = round(output_f[year][cause][mode],6)
+                        if (mode == 'num'):
+                            print "%d," % (num),
+                        elif (mode == '100k'):
+                            print "%d," % (num),
+                        else:
+                            print "%f," % (num),
                     else:
-                        print "%f," % (num),
+                        print 'Number.NaN,',
                 else:
-                    'Number.NaN,',
+                    print 'Number.NaN,',
             print "];"
         print ""
         # print the output arrays for male & female together
         gender = 'all'
         print "// Development of cancer causes bettwen the years %d and %d in %s (gender: %s, %s):" % (year_start, year_end, cn, gender, suffix)
-        print "data_array_%s['%s'] = [];" % (mode, gender)
+        print "data_array_%s_%s['%s'] = [];" % (mode, icc, gender)
         for cause in cause_pool_a:
-            print "data_array_%s['%s']['%s'] = [" % (mode, gender, cause),
+            print "data_array_%s_%s['%s']['%s'] = [" % (mode, icc, gender, cause),
             for year in range(year_start, year_end):
                 if (a_cause_assoc[year] != 0):
-                    num = round(output_a[year][cause][mode],6)
-                    if (mode == 'num'):
-                        print "%d," % (num),
-                    elif (mode == '100k'):
-                        print "%d," % (num),
+                    if (cause in output_a[year].keys()):
+                        num = round(output_a[year][cause][mode],6)
+                        if (mode == 'num'):
+                            print "%d," % (num),
+                        elif (mode == '100k'):
+                            print "%d," % (num),
+                        else:
+                            print "%f," % (num),
                     else:
-                        print "%f," % (num),
+                        print 'Number.NaN,',
                 else:
-                    'Number.NaN,',
+                    print 'Number.NaN,',
             print "];"
         print ""
 
