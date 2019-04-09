@@ -11,6 +11,8 @@ p = 735394902
 
 m_pop_by_age = {}
 f_pop_by_age = {}
+all_m = 0
+all_f = 0
 all = 0
 
 for e in f:
@@ -18,11 +20,13 @@ for e in f:
         key = e['k'].split('-')[0]
         value = e['v']
         f_pop_by_age[key] = int(value*1000)
+        all_f += int(value*1000)
         all += int(value*1000)
     else:
         key = '95'
         value = e['v']
         f_pop_by_age[key] += int(value*1000)
+        all_f += int(value*1000)
         all += int(value*1000)
 
 for e in m:
@@ -30,11 +34,13 @@ for e in m:
         key = e['k'].split('-')[0]
         value = e['v']
         m_pop_by_age[key] = int(value*1000)
+        all_m += int(value*1000)
         all += int(value*1000)
     else:
         key = '95'
         value = e['v']
         m_pop_by_age[key] += int(value*1000)
+        all_m += int(value*1000)
         all += int(value*1000)
 
 print "# this is the EU average data for 2010 taken from https://www.populationpyramid.net/europe/2010/"
@@ -42,8 +48,12 @@ print "std_m_pop_by_age =",
 print m_pop_by_age
 print "std_f_pop_by_age =",
 print f_pop_by_age
+print "std_m_pop =",
+print all_m
+print "std_f_pop =",
+print all_f
 print "std_a_pop =",
-print p
+print all
 
 if (all == p):
     print "OK: Computed population %d size fits with given population size %d" % (all, p)
