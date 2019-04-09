@@ -151,6 +151,51 @@ def population_range(country_code, year_query):
         arr.append([int(row[0]), int(row[1]), int(row[2])])
     return arr
 
+# This returns an array of [year, sex, population1 ... populationN]
+# for a given country code and year range
+#
+def population_range_by_age(country_code, year_query):
+    arr = []
+    q = """
+        SELECT year, sex,
+        Pop1 as 'all',
+        (Pop2 + Pop3 + Pop4 + Pop4 + Pop6) as "0",
+        Pop7 as "5",
+        Pop8 as "10",
+        Pop9 as "15",
+        Pop10 as "20",
+        Pop11 as "25",
+        Pop12 as "30",
+        Pop13 as "35",
+        Pop14 as "40",
+        Pop15 as "45",
+        Pop16 as "50",
+        Pop17 as "55",
+        Pop18 as "60",
+        Pop19 as "65",
+        Pop20 as "70",
+        Pop21 as "75",
+        Pop22 as "80",
+        Pop23 as "85",
+        Pop24 as "90",
+        Pop25 as "95"
+        FROM %s
+        WHERE Country = %s
+        AND Year %s
+        ORDER BY sex, year;
+        """ % (population_table, country_code, year_query)
+    cur.execute(q)
+    for i in range(cur.rowcount):
+        dict = {}
+        data = cur.fetchone()
+        if data == None:
+            return None
+        desc = cur.description
+        for (name, value) in zip(desc, data):
+            key = str(name[0])
+            dict[key] = value
+        arr.append(dict)
+    return arr
 
 def get_causes_for_country(country_code, cause, year, sex):
     arr = []
@@ -749,7 +794,7 @@ def get_deaths_by_age(country_code, cause_range, year_range, format):
     m_cause = {}
     f_cause = {}
     d_a = []
-    p_a = []
+    p_a = {}
     m_all = {}
     f_all = {}
     m_pop = {}
@@ -766,19 +811,37 @@ def get_deaths_by_age(country_code, cause_range, year_range, format):
     f_cause = get_causes_for_country_by_age(country_code, cause, year_query, 2)
     # Retrieve total males and females that died
     d_a = deaths_all_range(country_code, year_query)
-    p_a = population_range(country_code, year_query)
+    p_a = population_range_by_age(country_code, year_query)
     for year in range(year_range[0], year_range[1]+1):
-        # All male and female population for a given year
-        mpop = 0
-        fpop = 0
+        # All male and female population for a given year divided by age group
+        m_pop_tmp = {}
+        f_pop_tmp = {}
         for entry in p_a:
-            if (entry[0] == year):
-                if (entry[1] == 1):
-                    mpop = entry[2]
-                if (entry[1] == 2):
-                    fpop = entry[2]
-        f_pop[year] = fpop
-        m_pop[year] = mpop
+            if (entry['year'] == year):
+                if (entry['sex'] == 1):
+                    for age_range in age_ranges:
+                        key = age_range.split('-')[0]
+                        if (key in m_pop_tmp):
+                            m_pop_tmp[key] += entry[key]
+                        else:
+                            m_pop_tmp[key] = entry[key]
+                    if ('all' in m_pop_tmp):
+                        m_pop_tmp['all'] += entry['all']
+                    else:
+                        m_pop_tmp['all'] = entry['all']
+                if (entry['sex'] == 2):
+                    for age_range in age_ranges:
+                        key = age_range.split('-')[0]
+                        if (key in f_pop_tmp):
+                            f_pop_tmp[key] += entry[key]
+                        else:
+                            f_pop_tmp[key] = entry[key]
+                    if ('all' in f_pop_tmp):
+                        f_pop_tmp['all'] += entry['all']
+                    else:
+                        f_pop_tmp['all'] = entry['all']
+        m_pop[year] = m_pop_tmp
+        f_pop[year] = f_pop_tmp
         # All male and female deaths for a given year
         mda = 0
         fda = 0
@@ -791,7 +854,7 @@ def get_deaths_by_age(country_code, cause_range, year_range, format):
         f_all[year] = fda
         m_all[year] = mda
         # if we lack data zero everything else
-        if ((mda == 0) | (fda == 0) | (mpop == 0) | (fpop == 0)):
+        if ((mda == 0) | (fda == 0) | (m_pop[year]['all'] == 0) | (f_pop[year]['all'] == 0)):
             m_pop[year] = 0
             f_pop[year] = 0
             m_all[year] = 0
@@ -915,6 +978,8 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
     f_all = {}
     m_pop = {}
     f_pop = {}
+    m_pop_age = {}
+    f_pop_age = {}
     m_die = {}
     f_die = {}
     m_d_tmp = {}
@@ -1046,7 +1111,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if f_all[year] == 0:
                         print "",
                     else:
-                        print round(float(f_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6),
+                        print round(float(f_d_tmp[key][year]) / (f_pop[year]['all'] + m_pop[year]['all']) * 100,6),
                 print ""
             print ""
             print "Deaths in %s caused by %s between the years %s and %s divided by age, as a percentag of the whole population (male):" % (cn, cause_name, year_start, year_end)
@@ -1058,7 +1123,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if m_all[year] == 0:
                         print "",
                     else:
-                        print round(float(m_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6),
+                        print round(float(m_d_tmp[key][year]) / (f_pop[year]['all'] + m_pop[year]['all']) * 100,6),
                 print ""
             print ""
             print "Deaths in %s caused by %s between the years %s and %s divided by age, as a percentag of the whole population (all):" % (cn, cause_name, year_start, year_end)
@@ -1070,7 +1135,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if f_all[year] == 0:
                         print "",
                     else:
-                        print round(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6),
+                        print round(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (f_pop[year]['all'] + m_pop[year]['all']) * 100,6),
                 print ""
             print ""
         if (format == 'chartjs'):
@@ -1094,7 +1159,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if f_all[year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(f_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6)
+                        num = round(float(f_d_tmp[key][year]) / (f_pop[year]['all'] + m_pop[year]['all']) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1108,7 +1173,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if m_all[year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(m_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6)
+                        num = round(float(m_d_tmp[key][year]) / (f_pop[year]['all'] + m_pop[year]['all']) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1122,7 +1187,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if f_all[year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (f_pop[year] + m_pop[year]) * 100,6)
+                        num = round(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (f_pop[year]['all'] + m_pop[year]['all']) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1228,7 +1293,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if f_all[year] == 0:
                         print "",
                     else:
-                        print int(float(f_d_tmp[key][year]) / (float(f_pop[year]+m_pop[year])/100000)),
+                        print int(float(f_d_tmp[key][year]) / (float(f_pop[year]['all']+m_pop[year]['all'])/100000)),
                 print ""
             print ""
             print "Deaths in %s caused by %s between the years %s and %s divided by age per 100k citizens (male):" % (cn, cause_name, year_start, year_end)
@@ -1240,7 +1305,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if m_all[year] == 0:
                         print "",
                     else:
-                        print int(float(m_d_tmp[key][year]) / (float(f_pop[year]+m_pop[year])/100000)),
+                        print int(float(m_d_tmp[key][year]) / (float(f_pop[year]['all']+m_pop[year]['all'])/100000)),
                 print ""
             print ""
             print "Deaths in %s caused by %s between the years %s and %s divided by age per 100k citizens (all):" % (cn, cause_name, year_start, year_end)
@@ -1252,7 +1317,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if f_all[year] == 0:
                         print "",
                     else:
-                        print int(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (float(f_pop[year]+m_pop[year])/100000)),
+                        print int(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (float(f_pop[year]['all']+m_pop[year]['all'])/100000)),
                 print ""
             print ""
         if (format == 'chartjs'):
@@ -1276,7 +1341,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if f_all[year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = int(float(f_d_tmp[key][year]) / (float(f_pop[year]+m_pop[year])/100000)),
+                        num = int(float(f_d_tmp[key][year]) / (float(f_pop[year]['all']+m_pop[year]['all'])/100000)),
                         print "%d," % (num),
                 print "];"
             print ""
@@ -1290,7 +1355,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if m_all[year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = int(float(m_d_tmp[key][year]) / (float(f_pop[year]+m_pop[year])/100000)),
+                        num = int(float(m_d_tmp[key][year]) / (float(f_pop[year]['all']+m_pop[year]['all'])/100000)),
                         print "%d," % (num),
                 print "];"
             print ""
@@ -1304,7 +1369,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if f_all[year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = int(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (float(f_pop[year]+m_pop[year])/100000)),
+                        num = int(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (float(f_pop[year]['all']+m_pop[year]['all'])/100000)),
                         print "%d," % (num),
                 print "];"
             print ""
