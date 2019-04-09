@@ -1109,6 +1109,34 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                         print "%d," % (f_d_tmp[key][year]+m_d_tmp[key][year]),
                 print "];"
             print ""
+        ## this is a special format to display the deaths in a population curve
+        ## this is for absolute numbers of deaths (num)
+        if (format == 'animate'):
+            # find maximum
+            max = 0
+            for age_range in age_ranges:
+                age = age_range.split('-')[0]
+                for year in range(year_start, year_end+1):
+                    if ((f_all[year] > 0) & (m_all[year] > 0)):
+                        if ((m_d_tmp[age][year]+f_d_tmp[age][year]) > max):
+                            max = (m_d_tmp[age][year]+f_d_tmp[age][year])
+            print "max %d" % (int(float(max*1.2)/100)*100)
+            print "ages",
+            for year in range(year_start, year_end+1):
+                print year,
+            print ""
+            for age_range in age_ranges:
+                age = age_range.split('-')[0]
+                print age_range,
+                for year in range(year_start, year_end+1):
+                    if ((f_all[year] == 0) | (m_all[year] == 0)):
+                        print '0',
+                    else:
+                        print (m_d_tmp[age][year]+f_d_tmp[age][year]),
+                print ""
+            print "100+",
+            for year in range(year_start, year_end+1):
+                print 0,
     if (mode == 'pop'):
         if (format == 'normal'):
             print "Deaths in %s caused by %s between the years %s and %s divided by age, as a percentag of the whole population (female):" % (cn, cause_name, year_start, year_end)
@@ -1382,6 +1410,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                         print "%d," % (num),
                 print "];"
             print ""
+
 
 # This prints all cause_range-related deaths over all years in all EU and neighboring countries
 # (the list is not the most exhastive as smaller states like Bosnia, Monaco, and big neighbors like Belarus, Ukraine, are missing from it)
@@ -2116,7 +2145,7 @@ elif (task == "cancer_deaths_by_age"):
 
         deaths_by_age(country_query, ['c00', 'd48'], 'cancer', year_start, year_end, mode, format)
     else:
-        sys.exit("Usage: ./deaths.py cancer_deaths_by_age <country_name> <year_start> <year_end> < num | pop | rel | 100k | dsm > [chartjs]")
+        sys.exit("Usage: ./deaths.py cancer_deaths_by_age <country_name> <year_start> <year_end> < num | pop | rel | 100k | dsm > [chartjs | animate]")
 
 
 # This prints all suicides over all years in a given country
