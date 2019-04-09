@@ -790,7 +790,7 @@ def get_deaths(country_code, cause_range, year_range):
 # This gets all deaths, population, and deaths related to cause range
 # for a given country, cause range and year range divided byy age
 #
-def get_deaths_by_age(country_code, cause_range, year_range, format):
+def get_deaths_by_age(country_code, cause_range, year_range, format = 'normal'):
     m_cause = {}
     f_cause = {}
     d_a = []
@@ -854,7 +854,7 @@ def get_deaths_by_age(country_code, cause_range, year_range, format):
         f_all[year] = fda
         m_all[year] = mda
         # if we lack data zero everything else
-        if ((mda == 0) | (fda == 0) | (m_pop[year]['all'] == 0) | (f_pop[year]['all'] == 0)):
+        if ((mda == 0) | (fda == 0) | (m_pop[year] == {}) | (f_pop[year] == {})):
             m_pop[year] = 0
             f_pop[year] = 0
             m_all[year] = 0
@@ -1374,7 +1374,6 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                 print "];"
             print ""
 
-
 # This prints all cause_range-related deaths over all years in all EU and neighboring countries
 # (the list is not the most exhastive as smaller states like Bosnia, Monaco, and big neighbors like Belarus, Ukraine, are missing from it)
 #
@@ -1404,7 +1403,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
         country_code = eu_codes[i]
         country_name = eu_names[i]
         print_no_newline("Retrieving data for %s: " % country_name)
-        (m_a,f_a,m_p,f_p,m_d,f_d) = get_deaths(country_code, [cause_start, cause_end], [year_start, year_end])
+        (m_a,f_a,m_p,f_p,m_d,f_d) = get_deaths_by_age(country_code, [cause_start, cause_end], [year_start, year_end])
         m_a_tmp[country_name] = m_a
         f_a_tmp[country_name] = f_a
         m_p_tmp[country_name] = m_p
@@ -1451,7 +1450,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if f_all[year][cn] == 0:
                         print "",
                     else:
-                        print f_die[year][cn],
+                        print f_die[year][cn]['all'],
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (male):" % (cause_name, year_start, year_end)
@@ -1462,7 +1461,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print m_die[year][cn],
+                        print m_die[year][cn]['all'],
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (all):" % (cause_name, year_start, year_end)
@@ -1473,7 +1472,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print f_die[year][cn]+m_die[year][cn],
+                        print f_die[year][cn]['all']+m_die[year][cn]['all'],
                 print ""
             print ""
         if (format == 'chartjs'):
@@ -1487,7 +1486,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if f_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        print "%d," % f_d_tmp[cn][year],
+                        print "%d," % f_d_tmp[cn][year]['all'],
                 print "];"
             print ""
             gender = 'man'
@@ -1499,7 +1498,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        print "%d," % m_d_tmp[cn][year],
+                        print "%d," % m_d_tmp[cn][year]['all'],
                 print "];"
             print ""
             gender = 'all'
@@ -1511,7 +1510,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        print "%d," % (f_d_tmp[cn][year]+m_d_tmp[cn][year]),
+                        print "%d," % (f_d_tmp[cn][year]['all']+m_d_tmp[cn][year]['all']),
                 print "];"
             print ""
     if (mode == 'pop'):
@@ -1525,7 +1524,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(f_die[year][cn]) / (m_pop[year][cn] + f_pop[year][cn]) * 100,6),
+                        print round(float(f_die[year][cn]['all']) / (m_pop[year][cn]['all'] + f_pop[year][cn]['all']) * 100,6),
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (male, %% of Population):" % (cause_name, year_start, year_end)
@@ -1536,7 +1535,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(m_die[year][cn]) / (m_pop[year][cn] + f_pop[year][cn]) * 100,6),
+                        print round(float(m_die[year][cn]['all']) / (m_pop[year][cn]['all'] + f_pop[year][cn]['all']) * 100,6),
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (all, %% of Population):" % (cause_name, year_start, year_end)
@@ -1547,7 +1546,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(m_die[year][cn]+f_die[year][cn]) / (m_pop[year][cn] + f_pop[year][cn]) * 100,6),
+                        print round(float(m_die[year][cn]['all']+f_die[year][cn]['all']) / (m_pop[year][cn]['all'] + f_pop[year][cn]['all']) * 100,6),
                 print ""
             print ""
         if (format == 'chartjs'):
@@ -1561,7 +1560,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if f_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(f_d_tmp[cn][year]) / (f_p_tmp[cn][year] + m_p_tmp[cn][year]) * 100,6)
+                        num = round(float(f_d_tmp[cn][year]['all']) / (f_p_tmp[cn][year]['all'] + m_p_tmp[cn][year]['all']) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1574,7 +1573,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(m_d_tmp[cn][year]) / (f_p_tmp[cn][year] + m_p_tmp[cn][year]) * 100,6)
+                        num = round(float(m_d_tmp[cn][year]['all']) / (f_p_tmp[cn][year]['all'] + m_p_tmp[cn][year]['all']) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1587,7 +1586,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(m_d_tmp[cn][year]+f_d_tmp[cn][year]) / (f_p_tmp[cn][year] + m_p_tmp[cn][year]) * 100,6)
+                        num = round(float(m_d_tmp[cn][year]['all']+f_d_tmp[cn][year]['all']) / (f_p_tmp[cn][year]['all'] + m_p_tmp[cn][year]['all']) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1602,7 +1601,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(f_die[year][cn]) / (f_pop[year][cn]) * 100,6),
+                        print round(float(f_die[year][cn]['all']) / (f_pop[year][cn]['all']) * 100,6),
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (male, %% of male population):" % (cause_name, year_start, year_end)
@@ -1613,7 +1612,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(m_die[year][cn]) / (m_pop[year][cn]) * 100,6),
+                        print round(float(m_die[year][cn]['all']) / (m_pop[year][cn]['all']) * 100,6),
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (all, %% of all opulation):" % (cause_name, year_start, year_end)
@@ -1624,7 +1623,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(m_die[year][cn]+f_die[year][cn]) / (m_pop[year][cn] + f_pop[year][cn]) * 100,6),
+                        print round(float(m_die[year][cn]['all']+f_die[year][cn]['all']) / (m_pop[year][cn]['all'] + f_pop[year][cn]['all']) * 100,6),
                 print ""
             print ""
         if (format == 'chartjs'):
@@ -1638,7 +1637,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if f_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(f_d_tmp[cn][year]) / (f_p_tmp[cn][year]) * 100,6)
+                        num = round(float(f_d_tmp[cn][year]['all']) / (f_p_tmp[cn][year]['all']) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1651,7 +1650,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(m_d_tmp[cn][year]) / (m_p_tmp[cn][year]) * 100,6)
+                        num = round(float(m_d_tmp[cn][year]['all']) / (m_p_tmp[cn][year]['all']) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1664,7 +1663,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(m_d_tmp[cn][year]+f_d_tmp[cn][year]) / (f_p_tmp[cn][year] + m_p_tmp[cn][year]) * 100,6)
+                        num = round(float(m_d_tmp[cn][year]['all']+f_d_tmp[cn][year]['all']) / (f_p_tmp[cn][year]['all'] + m_p_tmp[cn][year]['all']) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1679,7 +1678,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if f_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(f_die[year][cn]) / (m_all[year][cn] + f_all[year][cn]) * 100,6),
+                        print round(float(f_die[year][cn]['all']) / (m_all[year][cn]['all'] + f_all[year][cn]['all']) * 100,6),
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (male, %% of deaths):" % (cause_name, year_start, year_end)
@@ -1690,7 +1689,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(m_die[year][cn]) / (m_all[year][cn] + f_all[year][cn]) * 100,6),
+                        print round(float(m_die[year][cn]['all']) / (m_all[year][cn]['all'] + f_all[year][cn]['all']) * 100,6),
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (all, %% of deaths):" % (cause_name, year_start, year_end)
@@ -1701,7 +1700,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(m_die[year][cn]+f_die[year][cn]) / (m_all[year][cn] + f_all[year][cn]) * 100,6),
+                        print round(float(m_die[year][cn]['all']+f_die[year][cn]['all']) / (m_all[year][cn] + f_all[year][cn]) * 100,6),
                 print ""
             print ""
         if (format == 'chartjs'):
@@ -1715,7 +1714,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if f_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(f_d_tmp[cn][year]) / (m_a_tmp[cn][year] + f_a_tmp[cn][year]) * 100,6)
+                        num = round(float(f_d_tmp[cn][year]['all']) / (m_a_tmp[cn][year] + f_a_tmp[cn][year]) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1728,7 +1727,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(m_d_tmp[cn][year]) / (m_a_tmp[cn][year] + f_a_tmp[cn][year]) * 100,6)
+                        num = round(float(m_d_tmp[cn][year]['all']) / (m_a_tmp[cn][year] + f_a_tmp[cn][year]) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1741,7 +1740,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(m_d_tmp[cn][year] + f_d_tmp[cn][year]) / (m_a_tmp[cn][year] + f_a_tmp[cn][year]) * 100,6)
+                        num = round(float(m_d_tmp[cn][year]['all'] + f_d_tmp[cn][year]['all']) / (m_a_tmp[cn][year] + f_a_tmp[cn][year]) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1756,7 +1755,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if f_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(f_die[year][cn]) / ( f_all[year][cn]) * 100,6),
+                        print round(float(f_die[year][cn]['all']) / ( f_all[year][cn]) * 100,6),
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (male, %% of deaths of men):" % (cause_name, year_start, year_end)
@@ -1767,7 +1766,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(m_die[year][cn]) / (m_all[year][cn]) * 100,6),
+                        print round(float(m_die[year][cn]['all']) / (m_all[year][cn]) * 100,6),
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (all, %% of deaths of all):" % (cause_name, year_start, year_end)
@@ -1778,7 +1777,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print round(float(m_die[year][cn]+f_die[year][cn]) / (m_all[year][cn] + f_all[year][cn]) * 100,6),
+                        print round(float(m_die[year][cn]['all']+f_die[year][cn]['all']) / (m_all[year][cn] + f_all[year][cn]) * 100,6),
                 print ""
             print ""
         if (format == 'chartjs'):
@@ -1792,7 +1791,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if f_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(f_d_tmp[cn][year]) / (f_a_tmp[cn][year]) * 100,6)
+                        num = round(float(f_d_tmp[cn][year]['all']) / (f_a_tmp[cn][year]) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1805,7 +1804,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(m_d_tmp[cn][year]) / (m_a_tmp[cn][year]) * 100,6)
+                        num = round(float(m_d_tmp[cn][year]['all']) / (m_a_tmp[cn][year]) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1818,7 +1817,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = round(float(m_d_tmp[cn][year] + f_d_tmp[cn][year]) / (m_a_tmp[cn][year] + f_a_tmp[cn][year]) * 100,6)
+                        num = round(float(m_d_tmp[cn][year]['all'] + f_d_tmp[cn][year]['all']) / (m_a_tmp[cn][year] + f_a_tmp[cn][year]) * 100,6)
                         print "%f," % (num),
                 print "];"
             print ""
@@ -1833,7 +1832,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if f_all[year][cn] == 0:
                         print "",
                     else:
-                        print int(float(f_die[year][cn]) / float(f_pop[year][cn]+m_pop[year][cn])/100000),
+                        print int(float(f_die[year][cn]['all']) / float(f_pop[year][cn]['all']+m_pop[year][cn]['all'])/100000),
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (male, deaths per 100k people):" % (cause_name, year_start, year_end)
@@ -1844,7 +1843,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print int(float(m_die[year][cn]) / float(f_pop[year][cn]+m_pop[year][cn])/100000),
+                        print int(float(m_die[year][cn]['all']) / float(f_pop[year][cn]['all']+m_pop[year][cn]['all'])/100000),
                 print ""
             print ""
             print "Deaths in Europe caused by %s between the years %s and %s (all, deaths per 100k people):" % (cause_name, year_start, year_end)
@@ -1855,7 +1854,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_all[year][cn] == 0:
                         print "",
                     else:
-                        print int(float(f_die[year][cn]+m_die[year][cn]) / float(f_pop[year][cn]+m_pop[year][cn])/100000),
+                        print int(float(f_die[year][cn]['all']+m_die[year][cn]['all']) / float(f_pop[year][cn]['all']+m_pop[year][cn]['all'])/100000),
                 print ""
             print ""
         if (format == 'chartjs'):
@@ -1869,7 +1868,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if f_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = int(float(f_d_tmp[cn][year]) / (float(f_p_tmp[cn][year]+m_p_tmp[cn][year])/100000))
+                        num = int(float(f_d_tmp[cn][year]['all']) / (float(f_p_tmp[cn][year]['all']+m_p_tmp[cn][year]['all'])/100000))
                         print "%d," % (num),
                 print "];"
             print ""
@@ -1882,7 +1881,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = int(float(m_d_tmp[cn][year]) / (float(f_p_tmp[cn][year]+m_p_tmp[cn][year])/100000))
+                        num = int(float(m_d_tmp[cn][year]['all']) / (float(f_p_tmp[cn][year]['all']+m_p_tmp[cn][year]['all'])/100000))
                         print "%d," % (num),
                 print "];"
             print ""
@@ -1895,7 +1894,7 @@ def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
                     if m_a_tmp[cn][year] == 0:
                         print 'Number.NaN,',
                     else:
-                        num = int(float(f_d_tmp[cn][year]+m_d_tmp[cn][year]) / (float(f_p_tmp[cn][year]+m_p_tmp[cn][year])/100000))
+                        num = int(float(f_d_tmp[cn][year]['all']+m_d_tmp[cn][year]['all']) / (float(f_p_tmp[cn][year]['all']+m_p_tmp[cn][year]['all'])/100000))
                         print "%d," % (num),
                 print "];"
             print ""
@@ -2009,7 +2008,7 @@ elif (task == "cancer_deaths_by_age"):
 
         deaths_by_age(country_query, ['c00', 'd48'], 'cancer', year_start, year_end, mode, format)
     else:
-        sys.exit("Usage: ./deaths.py cancer_deaths_by_age <country_name> <year_start> <year_end> < num | pop | rel | 100k > [chartjs]")
+        sys.exit("Usage: ./deaths.py cancer_deaths_by_age <country_name> <year_start> <year_end> < num | pop | rel | 100k | dsm > [chartjs]")
 
 
 # This prints all suicides over all years in a given country
