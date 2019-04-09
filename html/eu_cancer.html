@@ -18,6 +18,7 @@
         <button class="datasource" id='pop2' style="display: none; height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('pop2');">Percentage of population dead by cancer (relative to gender)</button>
         <button class="datasource" id='rel' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('rel');">Deaths by cancer as a percentage of all deaths</button>
         <button class="datasource" id='rel2' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('rel2');">Deaths by cancer as a percentage of all deaths (relative to gender)</button>
+        <button class="datasource" id='dsm' style="height: 20px; background-color: white; border: 0px;" onclick="switch_datasource('dsm');">Deaths by cancer per 100k people standardized by age</button>
     </div>
     <div class="chart-container" style="padding-left: 1%; position: relative; width:85%; height:83%;">
         <canvas id="full"></canvas>
@@ -50,6 +51,7 @@
 <script src="eu_cancer_pop2.js"></script>
 <script src="eu_cancer_rel2.js"></script>
 <script src="eu_cancer_100k.js"></script>
+<script src="eu_cancer_dsm.js"></script>
 <script>
     // the graph
     var full = document.getElementById("full").getContext('2d');
@@ -190,6 +192,7 @@
             document.getElementById('rel').style.border = '0px';
             document.getElementById('rel2').style.border = '0px';
             document.getElementById('100k').style.border = '0px';
+            document.getElementById('dsm').style.border = '0px';
             window.myChart.options.scales.yAxes = [{
                 type: 'logarithmic',
                 ticks: {
@@ -229,6 +232,7 @@
             document.getElementById('rel').style.border = '0px';
             document.getElementById('rel2').style.border = '0px';
             document.getElementById('100k').style.border = '0px';
+            document.getElementById('dsm').style.border = '0px';
             window.myChart.options.scales.yAxes = [{
                 type: 'linear',
                 ticks: {
@@ -251,6 +255,7 @@
             document.getElementById('rel').style.border = '0px';
             document.getElementById('rel2').style.border = '0px';
             document.getElementById('100k').style.border = '0px';
+            document.getElementById('dsm').style.border = '0px';
             window.myChart.options.scales.yAxes = [{
                 type: 'linear',
                 ticks: {
@@ -273,6 +278,7 @@
             document.getElementById('rel').style.borderStyle = 'solid';
             document.getElementById('rel2').style.border = '0px';
             document.getElementById('100k').style.border = '0px';
+            document.getElementById('dsm').style.border = '0px';
             window.myChart.options.scales.yAxes = [{
                 type: 'linear',
                 ticks: {
@@ -295,6 +301,7 @@
             document.getElementById('rel2').style.border = '1px';
             document.getElementById('rel2').style.borderStyle = 'solid';
             document.getElementById('100k').style.border = '0px';
+            document.getElementById('dsm').style.border = '0px';
             window.myChart.options.scales.yAxes = [{
                 type: 'linear',
                 ticks: {
@@ -317,6 +324,30 @@
             document.getElementById('100k').style.border = '1px';
             document.getElementById('100k').style.borderStyle = 'solid';
             document.getElementById('rel').style.border = '0px';
+            document.getElementById('dsm').style.border = '0px';
+            window.myChart.options.scales.yAxes = [{
+                type: 'linear',
+                ticks: {
+                    min: 0,
+                    max: chart_max
+                },
+            }]
+        }
+        if (source === 'dsm') {
+            data_array = data_array_dsm;
+            page_title = page_title_dsm;
+            chart_title = chart_title_dsm;
+            chart_title_stub = chart_title_stub_dsm;
+            chart_max = get_max(curr_gender);
+            window.myChart.options.scales.yAxes[0].type = 'linear';
+            document.getElementById('num').style.border = '0px';
+            document.getElementById('pop').style.border = '0px';
+            document.getElementById('pop2').style.border = '0px';
+            document.getElementById('rel').style.border = '0px';
+            document.getElementById('rel').style.border = '0px';
+            document.getElementById('100k').style.border = '0px';
+            document.getElementById('dsm').style.border = '1px';
+            document.getElementById('dsm').style.borderStyle = 'solid';
             window.myChart.options.scales.yAxes = [{
                 type: 'linear',
                 ticks: {
