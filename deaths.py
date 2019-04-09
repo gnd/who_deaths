@@ -37,6 +37,12 @@ eu_names = ["AT","BE","BG","CR","CY","CZ","DN","EE","FI","FR","DE","GR","HU","IE
 eu_codes = ["4010","4020","4030","4038","3080","4045","4050","4055","4070","4080","4085","4140","4150","4160","4170","4180","4186","4188","4190","4195","4200","4260","4207","4210","4230","4240","4270","4273","4274","4276","4280","4290","4300","4308"]
 age_ranges = ["0-5","5-9","10-14","15-19","20-24","25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-64","65-69","70-74","75-79","80-84","85-89","90-94","95-oo"]
 
+# this is the EU average data for 2010 taken from https://www.populationpyramid.net/europe/2010/
+std_m_pop_by_age = {'25': 26352164, '45': 27341224, '15': 22066209, '10': 19201642, '55': 23180214, '30': 25976480, '50': 25746113, '35': 26110878, '60': 19407747, '0': 20122084, '75': 9560901, '5': 18825319, '40': 26352663, '70': 13829064, '20': 25775013, '80': 6342744, '85': 2788631, '95': 174674, '90': 667250, '65': 14604063}
+std_f_pop_by_age = {'25': 25667032, '45': 28180085, '15': 21038043, '10': 18259139, '55': 25729444, '30': 25729620, '50': 27449341, '35': 26111762, '60': 22024627, '0': 19097169, '75': 14482711, '5': 17884460, '40': 26619865, '70': 19040716, '20': 24802121, '80': 11736206, '85': 6624301, '95': 707434, '90': 1967506, '65': 17818243}
+std_a_pop = 735394902
+
+
 def print_no_newline(string):
     import sys
     sys.stdout.write(string)
@@ -1312,6 +1318,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
 #               *   percentage of country's total population in the given year (mode: pop)
 #               *   percentage of country's total deaths in the given year (mode: rel)
 #               *   number of deaths per 100k people (mode: 100k)
+#               *   age-controlled number of deaths per 100k people (mode: dsm) - the 'direct' standardisation method described in A.B.Hill's Principles of Medical Statistics
 # All of the output is divided by gender, and a total output for male and female deaths is added to it
 def deaths_eu(cause_range, cause_name, year_start, year_end, mode, format):
     m_all = {}
