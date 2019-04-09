@@ -1222,7 +1222,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if f_all[year] == 0:
                         print "",
                     else:
-                        print int(float(f_d_tmp[key][year]) / float(f_pop[year]+m_pop[year])/100000),
+                        print int(float(f_d_tmp[key][year]) / (float(f_pop[year]+m_pop[year])/100000)),
                 print ""
             print ""
             print "Deaths in %s caused by %s between the years %s and %s divided by age per 100k citizens (male):" % (cn, cause_name, year_start, year_end)
@@ -1234,7 +1234,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if m_all[year] == 0:
                         print "",
                     else:
-                        print int(float(m_d_tmp[key][year]) / float(f_pop[year]+m_pop[year])/100000),
+                        print int(float(m_d_tmp[key][year]) / (float(f_pop[year]+m_pop[year])/100000)),
                 print ""
             print ""
             print "Deaths in %s caused by %s between the years %s and %s divided by age per 100k citizens (all):" % (cn, cause_name, year_start, year_end)
@@ -1246,7 +1246,7 @@ def deaths_by_age(country_query, cause_range, cause_name, year_start, year_end, 
                     if f_all[year] == 0:
                         print "",
                     else:
-                        print int(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / float(f_pop[year]+m_pop[year])/100000),
+                        print int(float(f_d_tmp[key][year]+m_d_tmp[key][year]) / (float(f_pop[year]+m_pop[year])/100000)),
                 print ""
             print ""
         if (format == 'chartjs'):
