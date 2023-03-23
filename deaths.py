@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # A script to analyze data from the WHO Mortality Database (http://www.who.int/healthinfo/mortality_data/en/)
 # Currently focused mostly on cancer and suicide related deaths.
 # For usage run ./deaths.py
 #
-# gnd, 2016 - 2019
+# gnd, 2016 - 2023
 #######################################################################3
 
 import sys
@@ -2207,7 +2207,7 @@ elif (task == "suicide_eu"):
 
         deaths_eu(['x60','x84'], 'suicide', year_start, year_end, mode, format)
     else:
-        sys.exit("Usage: ./deaths.py suicide_eu <year_start> <year_end> <num | pop | rel> [chartjs]")
+        sys.exit("Usage: ./deaths.py suicide_eu <year_start> <year_end> < num | pop | pop2 | rel | rel2 | 100k | dsm > [chartjs]")
 
 else:
     sys.exit("Usage: ./deaths.py [ top10_causes | cancer_top10_causes | cancer_top10_full | cancer_deaths | cancer_deaths_by_age | suicide_deaths | cancer_eu | suicide_eu ]")

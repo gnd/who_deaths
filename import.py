@@ -1,15 +1,15 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
-# This imports .csv files from WHO Mortality Database (http://www.who.int/healthinfo/mortality_data/en/) into mysql
+# This imports .csv files from WHO Mortality Database (https://www.who.int/data/data-collection-tools/who-mortality-database) into mysql
 #
-# gnd, 2018 - 2019
+# gnd, 2018 - 2023
 #######################################################
 import MySQLdb
 import csv
 import sys
-import ConfigParser
+import configparser
 
-config = ConfigParser.ConfigParser()
+config = configparser.ConfigParser()
 config.read("db.conf")
 dbhost = config.get("mysql", "dbhost")
 dbuser = config.get("mysql", "dbuser")
@@ -22,14 +22,16 @@ if ((not dbhost) | (not dbuser) | (not dbname)):
 if (not who_data_dir):
     sys.exit("Please provide the location of the WHO data (who_data_dir)")
 
-db = MySQLdb.connect(dbhost, dbuser, dbpass, dbname)
+
+from MySQLdb.constants import CLIENT
+db = MySQLdb.connect(dbhost, dbuser, dbpass, dbname, client_flag=CLIENT.LOCAL_FILES)
 cur = db.cursor()
 
 '''
 Use the following queries (copy & paste) to create tables, then populate them by running the script
 Change the year for the year in the db.conf file
 
-CREATE TABLE `data_2019` (
+CREATE TABLE `data_2023` (
   `Country` smallint(6) DEFAULT NULL,
   `Admin1` varchar(255) DEFAULT NULL,
   `SubDiv` varchar(255) DEFAULT NULL,
@@ -71,12 +73,12 @@ CREATE TABLE `data_2019` (
   `IM_Deaths4` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `countries_2019` (
+CREATE TABLE `countries_2023` (
   `Country` smallint(6) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `population_2019` (
+CREATE TABLE `population_2023` (
   `Country` smallint(6) DEFAULT NULL,
   `Admin1` varchar(255) DEFAULT NULL,
   `SubDiv` varchar(255) DEFAULT NULL,
@@ -113,7 +115,7 @@ CREATE TABLE `population_2019` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 '''
 
-print "Importing data pt.1"
+print("Importing data pt.1")
 cursor = db.cursor()
 Query = """ LOAD DATA LOCAL INFILE '%s/Morticd10_part1' INTO TABLE
 data_%s FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED
@@ -121,7 +123,7 @@ BY '"' Lines terminated by '\r\n' IGNORE 1 LINES """ % (who_data_dir, data_year)
 cursor.execute(Query)
 db.commit()
 
-print "Importing data pt.2"
+print("Importing data pt.2")
 cursor = db.cursor()
 Query = """ LOAD DATA LOCAL INFILE '%s/Morticd10_part2' INTO TABLE
 data_%s FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED
@@ -129,7 +131,31 @@ BY '"' Lines terminated by '\r\n' IGNORE 1 LINES """ % (who_data_dir, data_year)
 cursor.execute(Query)
 db.commit()
 
-print "Importing country codes"
+print("Importing data pt.3")
+cursor = db.cursor()
+Query = """ LOAD DATA LOCAL INFILE '%s/Morticd10_part3' INTO TABLE
+data_%s FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED
+BY '"' Lines terminated by '\r\n' IGNORE 1 LINES """ % (who_data_dir, data_year)
+cursor.execute(Query)
+db.commit()
+
+print("Importing data pt.4")
+cursor = db.cursor()
+Query = """ LOAD DATA LOCAL INFILE '%s/Morticd10_part4' INTO TABLE
+data_%s FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED
+BY '"' Lines terminated by '\r\n' IGNORE 1 LINES """ % (who_data_dir, data_year)
+cursor.execute(Query)
+db.commit()
+
+print("Importing data pt.5")
+cursor = db.cursor()
+Query = """ LOAD DATA LOCAL INFILE '%s/Morticd10_part5' INTO TABLE
+data_%s FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED
+BY '"' Lines terminated by '\r\n' IGNORE 1 LINES """ % (who_data_dir, data_year)
+cursor.execute(Query)
+db.commit()
+
+print("Importing country codes")
 cursor = db.cursor()
 Query = """ LOAD DATA LOCAL INFILE '%s/country_codes' INTO TABLE
 countries_%s FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED
@@ -137,7 +163,7 @@ BY '"' Lines terminated by '\r\n' IGNORE 1 LINES """ % (who_data_dir, data_year)
 cursor.execute(Query)
 db.commit()
 
-print "Importing population data"
+print("Importing population data")
 cursor = db.cursor()
 Query = """ LOAD DATA LOCAL INFILE '%s/pop' INTO TABLE
 population_%s FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED
@@ -145,5 +171,5 @@ BY '"' Lines terminated by '\r\n' IGNORE 1 LINES """ % (who_data_dir, data_year)
 cursor.execute(Query)
 db.commit()
 
-print "Done"
+print("Done")
 cursor.close()
